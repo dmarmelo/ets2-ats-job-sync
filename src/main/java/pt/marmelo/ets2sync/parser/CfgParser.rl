@@ -87,7 +87,7 @@ public class CfgParser {
             if (cs >= cfgParser_first_final) {
 				callback.apply(Context.CFG_PROPERTY, varName, varValue, new String(line), p - bufferStart);
 			} else {
-				callback.apply(Context.CFG_PROPERTY, empty, empty, new String(line), p - bufferStart);
+				callback.apply(Context.EMPTY_LINE, empty, empty, new String(line), p - bufferStart);
 			}
 
             lineStart = lineEnd;

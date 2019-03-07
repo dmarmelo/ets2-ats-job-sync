@@ -13,7 +13,7 @@ abstract class AbstractSave(
     val saveTimeAttribute: String
 ) : Comparable<AbstractSave> {
 
-    protected lateinit var _game: Game
+    protected var _game: Game = Game.INVALID
     val game: Game
         get() = _game
 
@@ -39,7 +39,7 @@ abstract class AbstractSave(
         val save = directory.resolve(siiFileBaseName)
         val fileContent = SiiFile().read(save.toFile())
 
-        SiiTextParser.parse(fileContent) { context, name, value, sourceValue, offset ->
+        SiiTextParser.parse(fileContent) { context, name, value, _, _ ->
             if (context == Context.ATTRIBUTE) {
                 when(name) {
                     nameAttribute -> _name = value

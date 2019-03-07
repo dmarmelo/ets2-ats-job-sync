@@ -50,8 +50,7 @@ class Profile(
     }
 
     override fun validate(): Boolean {
-        // TODO validate
-        return true
+        return game != Game.INVALID
     }
 
 

@@ -40,8 +40,8 @@ class Save(
         if (context == Context.ATTRIBUTE) {
             if (name.startsWith(DEPEND_ATTRIBUTE)) {
                 val split = value.split("|")
-                val name = split[1].split("_")[1]
-                _dlcs.add(name)
+                val dlcName = split[1].split("_")[1]
+                _dlcs.add(dlcName)
             }
             else if (name == INFO_GAME_TIME_ATTRIBUTE) {
                 _gameTime = value.toLong()
