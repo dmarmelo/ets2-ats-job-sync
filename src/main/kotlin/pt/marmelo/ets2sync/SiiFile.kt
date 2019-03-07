@@ -2,19 +2,22 @@ package pt.marmelo.ets2sync
 
 import pt.marmelo.ets2sync.parser.ParseCallback
 import pt.marmelo.ets2sync.parser.SiiTextParser
-import java.io.File
+import pt.marmelo.ets2sync.util.byteArrayOfInts
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.*
 import java.util.zip.Inflater
-import javax.crypto.spec.IvParameterSpec
 import javax.crypto.Cipher
+import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
 
 
-class SiiFile {
+class SiiFile(
+    val file: Path
+) {
     private companion object {
         // Magic headers
         const val SII_MAGIC_ENCRYPTED = "ScsC"
@@ -25,13 +28,14 @@ class SiiFile {
     }
 
     // Reads a game file and, if encrypted or binary, convert to plaintext
-    fun read(file: File): ByteArray {
-        val fileContent = Files.readAllBytes(file.toPath())
+    fun read(): ByteArray {
+        val fileContent = Files.readAllBytes(file)
         return unpack(fileContent)
     }
 
     // Parses a plaintext game file
-    fun parse(data: ByteArray, callback: ParseCallback): Boolean {
+    fun parse(callback: ParseCallback): Boolean {
+        val data = read()
         val magic = getMagic(data)
         if (magic == SII_MAGIC_TEXT) { // Text
             return SiiTextParser.parse(data, callback)

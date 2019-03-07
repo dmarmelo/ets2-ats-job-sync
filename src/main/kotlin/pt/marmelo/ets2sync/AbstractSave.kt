@@ -1,10 +1,9 @@
 package pt.marmelo.ets2sync
 
 import pt.marmelo.ets2sync.parser.Context
-import pt.marmelo.ets2sync.parser.SiiTextParser
+import pt.marmelo.ets2sync.parser.ParseCallback
 import java.nio.file.Path
 import java.time.Instant
-import java.util.*
 
 abstract class AbstractSave(
     val directory: Path,
@@ -37,9 +36,7 @@ abstract class AbstractSave(
     // Should be called from the constructor of a derived class.
     fun init() {
         val save = directory.resolve(siiFileBaseName)
-        val fileContent = SiiFile().read(save.toFile())
-
-        SiiTextParser.parse(fileContent) { context, name, value, _, _ ->
+        SiiFile(save).parse(ParseCallback { context, name, value, _, _ ->
             if (context == Context.ATTRIBUTE) {
                 when(name) {
                     nameAttribute -> _name = value
@@ -47,7 +44,7 @@ abstract class AbstractSave(
                 }
             }
             processAtribute(context, name, value)
-        }
+        })
 
         // TODO
         //_isValid = validate()

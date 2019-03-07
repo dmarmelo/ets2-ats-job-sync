@@ -1,7 +1,9 @@
 package pt.marmelo.ets2sync
 
 import pt.marmelo.ets2sync.parser.Context
+import pt.marmelo.ets2sync.parser.ParseCallback
 import java.nio.file.Path
+import java.util.HashMap
 import kotlin.collections.ArrayList
 
 class Save(
@@ -49,8 +51,66 @@ class Save(
         }
     }
 
-    fun replaceJobList(jobs: List<Job>): Boolean {
+    fun extractJobs(): Map<String, List<Job>> {
+        val jobs: MutableMap<String, MutableList<Job>> = HashMap()
+        var inJob = false
+        var skipJob = false
+        var job: Job.Builder = Job.Builder()
+        var companyName = ""
 
+        val save = directory.resolve(SAVE_BASENAME)
+        SiiFile(save).parse(ParseCallback { context, name, value, _, _ ->
+            if (context == Context.UNIT_START) {
+                if (name == COMPANY_UNIT) {
+                    companyName = value.replace(COMPANY_NAME_PREFIX, "")
+                    jobs[companyName] = ArrayList()
+                }
+                else if (name == JOB_UNIT) {
+                    inJob = true
+                    job = Job.Builder()
+                }
+            }
+            else if (context == Context.UNIT_END) {
+                if (inJob) {
+                    if (!skipJob)
+                        jobs[companyName]!!.add(job.build())
+                    inJob = false
+                    skipJob = false
+                }
+            }
+            else if (context == Context.ATTRIBUTE) {
+                if (inJob && !skipJob) {
+                    when(name) {
+                        Job.Properties.TARGET.propertyName -> {
+                            if (value.isEmpty())
+                                skipJob = true
+                            else
+                                job.target = value
+                        }
+                        Job.Properties.EXPIRATION_TIME.propertyName -> job.expirationTime = value.toLong()
+                        Job.Properties.URGENCY.propertyName -> job.urgency = value.toInt()
+                        Job.Properties.DISTANCE.propertyName -> job.distance = value.toInt()
+                        Job.Properties.FERRY_TIME.propertyName -> job.ferryTime = value.toInt()
+                        Job.Properties.FERRY_PRICE.propertyName -> job.ferryPrice = value.toInt()
+                        Job.Properties.CARGO.propertyName -> job.cargo = value
+                        Job.Properties.COMPANY_TRUCK.propertyName -> job.companyTruck = value
+                        Job.Properties.TRAILER_VARIANT.propertyName -> job.trailerVariant = value
+                        Job.Properties.TRAILER_DEFINITION.propertyName -> job.trailerDefinition = value
+                        Job.Properties.UNITS_COUNT.propertyName -> job.unitsCount = value.toInt()
+                        Job.Properties.FILL_RATIO.propertyName -> job.fillRatio = value.toInt()
+                        Job.Properties.TRAILER_PLACE.propertyName -> job.trailerPlace = value.toInt()
+                    }
+                }
+            }
+        })
+        return jobs
+    }
+
+    fun replaceJobList(jobs: Map<String, List<Job>>): Boolean {
+        val save = directory.resolve(SAVE_BASENAME)
+        SiiFile(save).parse(ParseCallback { context, name, value, _, _ ->
+
+        })
         return true
     }
 

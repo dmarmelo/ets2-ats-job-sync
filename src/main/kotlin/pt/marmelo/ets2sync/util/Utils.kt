@@ -1,4 +1,4 @@
-package pt.marmelo.ets2sync
+package pt.marmelo.ets2sync.util
 
 fun byteArrayOfInts(vararg ints: Int) = ByteArray(ints.size) { pos -> ints[pos].toByte() }
 
