@@ -2,7 +2,7 @@ package pt.marmelo.ets2sync
 
 import pt.marmelo.ets2sync.parser.Context
 import pt.marmelo.ets2sync.parser.ParseCallback
-import java.lang.StringBuilder
+import pt.marmelo.ets2sync.util.callMethod
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -81,25 +81,18 @@ class Save(
             }
             else if (context == Context.ATTRIBUTE) {
                 if (inJob && !skipJob) {
-                    when(name) {
-                        Job.Properties.TARGET.propertyName -> {
-                            if (value.isEmpty())
-                                skipJob = true
-                            else
-                                job.target = value
+                    if (name == Job.Properties.TARGET.propertyName) {
+                        if (value.isEmpty())
+                            skipJob = true
+                        else
+                            job.target(value)
+                    }
+                    else {
+                        for (property in Job.Properties.values()) {
+                            if (name == property.propertyName) {
+                                job.callMethod<Job.Builder>(property.jobPropertyName, value)
+                            }
                         }
-                        Job.Properties.EXPIRATION_TIME.propertyName -> job.expirationTime = value.toLong()
-                        Job.Properties.URGENCY.propertyName -> job.urgency = value.toInt()
-                        Job.Properties.DISTANCE.propertyName -> job.shortestDistanceKm = value.toInt()
-                        Job.Properties.FERRY_TIME.propertyName -> job.ferryTime = value.toInt()
-                        Job.Properties.FERRY_PRICE.propertyName -> job.ferryPrice = value.toInt()
-                        Job.Properties.CARGO.propertyName -> job.cargo = value
-                        Job.Properties.COMPANY_TRUCK.propertyName -> job.companyTruck = value
-                        Job.Properties.TRAILER_VARIANT.propertyName -> job.trailerVariant = value
-                        Job.Properties.TRAILER_DEFINITION.propertyName -> job.trailerDefinition = value
-                        Job.Properties.UNITS_COUNT.propertyName -> job.unitsCount = value.toInt()
-                        Job.Properties.FILL_RATIO.propertyName -> job.fillRatio = value.toInt()
-                        Job.Properties.TRAILER_PLACE.propertyName -> job.trailerPlace = value.toInt()
                     }
                 }
             }

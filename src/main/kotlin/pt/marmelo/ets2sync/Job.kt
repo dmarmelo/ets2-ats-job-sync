@@ -34,19 +34,28 @@ class Job(
 
         fun target(target: String) = apply { this.target = target }
         fun expirationTime(expirationTime: Long) = apply { this.expirationTime = expirationTime }
+        fun expirationTime(expirationTime: String) = expirationTime(expirationTime.toLong())
         fun urgency(urgency: Int) = apply { this.urgency = urgency }
+        fun urgency(urgency: String) = urgency(urgency.toInt())
         fun shortestDistanceKm(shortestDistanceKm: Int) = apply { this.shortestDistanceKm = shortestDistanceKm }
+        fun shortestDistanceKm(shortestDistanceKm: String) = shortestDistanceKm.toInt()
         fun ferryTime(ferryTime: Int) = apply { this.ferryTime = ferryTime }
+        fun ferryTime(ferryTime: String) = ferryTime.toInt()
         fun ferryPrice(ferryPrice: Int) = apply { this.ferryPrice = ferryPrice }
+        fun ferryPrice(ferryPrice: String) = ferryPrice.toInt()
         fun cargo(cargo: String) = apply { this.cargo = cargo }
         fun companyTruck(companyTruck: String) = apply { this.companyTruck = companyTruck }
         fun trailerVariant(trailerVariant: String) = apply { this.trailerVariant = trailerVariant }
         fun trailerDefinition(trailerDefinition: String) = apply { this.trailerDefinition = trailerDefinition }
         fun unitsCount(unitsCount: Int) = apply { this.unitsCount = unitsCount }
+        fun unitsCount(unitsCount: String) = unitsCount.toInt()
         fun fillRatio(fillRatio: Int) = apply { this.fillRatio = fillRatio }
+        fun fillRatio(fillRatio: String) = fillRatio.toInt()
         fun trailerPlace(trailerPlace: Int) = apply { this.trailerPlace = trailerPlace }
+        fun trailerPlace(trailerPlace: String) = trailerPlace.toInt()
 
-        fun build() = Job(target, expirationTime, urgency, shortestDistanceKm, ferryTime, ferryPrice, cargo, companyTruck, trailerVariant, trailerDefinition, unitsCount, fillRatio, trailerPlace)
+        fun build() = Job(target, expirationTime, urgency, shortestDistanceKm, ferryTime, ferryPrice, cargo, companyTruck,
+            trailerVariant, trailerDefinition, unitsCount, fillRatio, trailerPlace)
     }
 
     enum class Properties {
