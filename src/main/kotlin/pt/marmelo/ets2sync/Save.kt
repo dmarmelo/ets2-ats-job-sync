@@ -161,6 +161,7 @@ class Save(
                         if (!useEmptyJob) {
                             newSaveData.append(gameTime + 30000)
                             newLineHasValue = true
+                            jobsAdded++
                         }
                         else if (Job.Properties.EXPIRATION_TIME.hasDefault) {
                             newSaveData.append(Job.Properties.EXPIRATION_TIME.defaultValue())
@@ -169,11 +170,10 @@ class Save(
                     }
                     else {
                         for (property in Job.Properties.values()) {
-                            if (name == property.name) {
+                            if (name == property.propertyName) {
                                 if (!useEmptyJob) {
                                     newSaveData.append(property.formatValue(currentJob))
                                     newLineHasValue = true
-                                    jobsAdded++
                                 }
                                 else if (property.hasDefault) {
                                     newSaveData.append(property.defaultValue())
