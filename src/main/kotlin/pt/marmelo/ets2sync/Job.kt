@@ -1,21 +1,23 @@
 package pt.marmelo.ets2sync
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import pt.marmelo.ets2sync.util.readPropery
 
 class Job(
-    var target: String,
-    var expirationTime: Long,
-    var urgency: Int,
-    var shortestDistanceKm: Int,
-    var ferryTime: Int,
-    var ferryPrice: Int,
-    var cargo: String,
-    var companyTruck: String,
-    var trailerVariant: String,
-    var trailerDefinition: String,
-    var unitsCount: Int,
-    var fillRatio: Int,
-    var trailerPlace: Int
+    val target: String,
+    @JsonIgnore
+    val expirationTime: Long,
+    val urgency: Int,
+    val shortestDistanceKm: Int,
+    val ferryTime: Int,
+    val ferryPrice: Int,
+    val cargo: String,
+    val companyTruck: String,
+    val trailerVariant: String,
+    val trailerDefinition: String,
+    val unitsCount: Int,
+    val fillRatio: Int,
+    val trailerPlace: List<String>
 ) {
     class Builder {
         lateinit var target: String
@@ -30,7 +32,7 @@ class Job(
         lateinit var trailerDefinition: String
         var unitsCount: Int = 0
         var fillRatio: Int = 0
-        var trailerPlace: Int = 0
+        var trailerPlace: MutableList<String> = ArrayList()
 
         fun target(target: String) = apply { this.target = target }
         fun expirationTime(expirationTime: Long) = apply { this.expirationTime = expirationTime }
@@ -38,21 +40,20 @@ class Job(
         fun urgency(urgency: Int) = apply { this.urgency = urgency }
         fun urgency(urgency: String) = urgency(urgency.toInt())
         fun shortestDistanceKm(shortestDistanceKm: Int) = apply { this.shortestDistanceKm = shortestDistanceKm }
-        fun shortestDistanceKm(shortestDistanceKm: String) = shortestDistanceKm.toInt()
+        fun shortestDistanceKm(shortestDistanceKm: String) = shortestDistanceKm(shortestDistanceKm.toInt())
         fun ferryTime(ferryTime: Int) = apply { this.ferryTime = ferryTime }
-        fun ferryTime(ferryTime: String) = ferryTime.toInt()
+        fun ferryTime(ferryTime: String) = ferryTime(ferryTime.toInt())
         fun ferryPrice(ferryPrice: Int) = apply { this.ferryPrice = ferryPrice }
-        fun ferryPrice(ferryPrice: String) = ferryPrice.toInt()
+        fun ferryPrice(ferryPrice: String) = ferryPrice(ferryPrice.toInt())
         fun cargo(cargo: String) = apply { this.cargo = cargo }
         fun companyTruck(companyTruck: String) = apply { this.companyTruck = companyTruck }
         fun trailerVariant(trailerVariant: String) = apply { this.trailerVariant = trailerVariant }
         fun trailerDefinition(trailerDefinition: String) = apply { this.trailerDefinition = trailerDefinition }
         fun unitsCount(unitsCount: Int) = apply { this.unitsCount = unitsCount }
-        fun unitsCount(unitsCount: String) = unitsCount.toInt()
+        fun unitsCount(unitsCount: String) = unitsCount(unitsCount.toInt())
         fun fillRatio(fillRatio: Int) = apply { this.fillRatio = fillRatio }
-        fun fillRatio(fillRatio: String) = fillRatio.toInt()
-        fun trailerPlace(trailerPlace: Int) = apply { this.trailerPlace = trailerPlace }
-        fun trailerPlace(trailerPlace: String) = trailerPlace.toInt()
+        fun fillRatio(fillRatio: String) = fillRatio(fillRatio.toInt())
+        fun addTrailerPlace(trailerPlace: String) = apply { this.trailerPlace.add(trailerPlace) }
 
         fun build() = Job(target, expirationTime, urgency, shortestDistanceKm, ferryTime, ferryPrice, cargo, companyTruck,
             trailerVariant, trailerDefinition, unitsCount, fillRatio, trailerPlace)
@@ -67,11 +68,11 @@ class Job(
         FERRY_PRICE("ferry_price",0),
         CARGO("cargo","null"),
         COMPANY_TRUCK("company_truck","", false, true, "/"),
-        TRAILER_VARIANT("trailer_variant"),
-        TRAILER_DEFINITION("trailer_definition"),
-        UNITS_COUNT("units_count"),
+        TRAILER_VARIANT("trailer_variant", "null"),
+        TRAILER_DEFINITION("trailer_definition", "null"),
+        UNITS_COUNT("units_count", 0),
         FILL_RATIO("fill_ratio",1),
-        TRAILER_PLACE("trailer_place",0);
+        TRAILER_PLACE("trailer_place", true);
 
         val propertyName: String
         val jobPropertyName: String
@@ -87,9 +88,6 @@ class Job(
                     camelCase
                 }
             }
-        private var _hasDefault: Boolean = false
-        val hasDefault: Boolean
-            get() = _hasDefault
         private lateinit var blankValue: Any
         private var isQuoted: Boolean = false
         private var isQuotedOnBlank: Boolean = false
@@ -101,18 +99,30 @@ class Job(
             this.isQuoted = isQuoted
             this.isQuotedOnBlank = isQuotedOnBlank
             this.quotedIfContains = quotedIfContains
-            this._hasDefault = true
         }
 
-        constructor(propertyName: String, isQuoted: Boolean = false, quotedIfContains: String? = null) {
+        private var _isList: Boolean = false
+        val isList: Boolean
+            get() = _isList
+
+        constructor(propertyName: String, isList: Boolean) {
             this.propertyName = propertyName
-            this.isQuoted = isQuoted
-            this.quotedIfContains = quotedIfContains
+            this._isList = isList
         }
 
         fun formatValue(job: Job): String {
-            val value = job.readPropery<Any>(jobPropertyName)
-            return this.formatValue(value)!!
+            return if (isList) {
+                val value = job.readPropery<List<*>>(jobPropertyName)
+                val formattedList = StringBuilder()
+                formattedList.append(value.size)
+                for ((i, p) in value.withIndex()) {
+                    formattedList.append("\r\n $propertyName[$i]: $p")
+                }
+                formattedList.toString()
+            } else {
+                val value = job.readPropery<Any>(jobPropertyName)
+                formatValue(value)!!
+            }
         }
 
         fun formatValue(value: Any): String? {
@@ -128,15 +138,27 @@ class Job(
         }
 
         fun defaultValue(): Any? {
-            if (hasDefault) {
-                return when (blankValue) {
+            return if (isList) 0
+            else {
+                when (blankValue) {
                     is String -> if (isQuotedOnBlank) "\"$blankValue\"" else blankValue
                     is Int -> if (isQuotedOnBlank) "\"$blankValue\"" else blankValue.toString()
                     is Long -> if (isQuotedOnBlank) "\"$blankValue\"" else blankValue.toString()
                     else -> null
                 }
             }
-            return null
+        }
+
+        companion object {
+            fun isList(name: String): Boolean {
+                for (p in values()) {
+                    if(p.isList && name.startsWith(p.propertyName + "["))
+                        return true
+                }
+                return false
+            }
+
+            fun notList(name: String) = !isList(name)
         }
     }
 }

@@ -2,7 +2,6 @@ package pt.marmelo.ets2sync
 
 import pt.marmelo.ets2sync.parser.Context
 import pt.marmelo.ets2sync.parser.ParseCallback
-import pt.marmelo.ets2sync.util.callMethod
 import java.nio.file.Files
 import java.nio.file.Path
 import java.util.*
@@ -81,18 +80,27 @@ class Save(
             }
             else if (context == Context.ATTRIBUTE) {
                 if (inJob && !skipJob) {
-                    if (name == Job.Properties.TARGET.propertyName) {
-                        if (value.isEmpty())
-                            skipJob = true
-                        else
-                            job.target(value)
-                    }
-                    else {
-                        for (property in Job.Properties.values()) {
-                            if (name == property.propertyName) {
-                                job.callMethod<Job.Builder>(property.jobPropertyName, value)
-                            }
+                    when(name) {
+                        Job.Properties.TARGET.propertyName -> {
+                            if (value.isEmpty())
+                                skipJob = true
+                            else
+                                job.target(value)
                         }
+                        Job.Properties.EXPIRATION_TIME.propertyName -> job.expirationTime(value)
+                        Job.Properties.URGENCY.propertyName -> job.urgency(value)
+                        Job.Properties.DISTANCE.propertyName -> job.shortestDistanceKm(value)
+                        Job.Properties.FERRY_TIME.propertyName -> job.ferryTime(value)
+                        Job.Properties.FERRY_PRICE.propertyName -> job.ferryPrice(value)
+                        Job.Properties.CARGO.propertyName -> job.cargo(value)
+                        Job.Properties.COMPANY_TRUCK.propertyName -> job.companyTruck(value)
+                        Job.Properties.TRAILER_VARIANT.propertyName -> job.trailerVariant(value)
+                        Job.Properties.TRAILER_DEFINITION.propertyName -> job.trailerDefinition(value)
+                        Job.Properties.UNITS_COUNT.propertyName -> job.unitsCount(value)
+                        Job.Properties.FILL_RATIO.propertyName -> job.fillRatio(value)
+                    }
+                    if (name.startsWith(Job.Properties.TRAILER_PLACE.propertyName + "[")) {
+                        job.addTrailerPlace(value)
                     }
                 }
             }
@@ -111,7 +119,8 @@ class Save(
         var companyJobIndex = 0
 
         var companyJobs: List<Job> = Collections.emptyList()
-        var currentJob = Job("", 0, 0, 0, 0, 0, "", "", "", "", 0, 0, 0)
+        var currentJob = Job("", 0, 0, 0, 0, 0,
+            "", "", "", "", 0, 0, Collections.emptyList())
         var useEmptyJob = false
 
         val save = directory.resolve(SAVE_BASENAME)
@@ -147,39 +156,37 @@ class Save(
                 newSaveData.append("}\r\n")
             }
             else if (context == Context.ATTRIBUTE) {
-                newSaveData.append(" ").append(name).append(": ")
+                if (!inJob || Job.Properties.notList(name)) {
+                    newSaveData.append(" ").append(name).append(": ")
+                }
                 newLineHasValue = false
                 if (inJob) {
-                    if (name == Job.Properties.EXPIRATION_TIME.propertyName) {
-                        if (!useEmptyJob) {
-                            newSaveData.append(gameTime + 30000)
-                            newLineHasValue = true
-                            jobsAdded++
-                        }
-                        else if (Job.Properties.EXPIRATION_TIME.hasDefault) {
-                            newSaveData.append(Job.Properties.EXPIRATION_TIME.defaultValue())
+                    when (name) {
+                        Job.Properties.EXPIRATION_TIME.propertyName -> {
+                            newSaveData.append(if (!useEmptyJob) gameTime + 30000 else Job.Properties.EXPIRATION_TIME.defaultValue())
                             newLineHasValue = true
                         }
-                    }
-                    else {
-                        for (property in Job.Properties.values()) {
-                            if (name == property.propertyName) {
-                                if (!useEmptyJob) {
-                                    newSaveData.append(property.formatValue(currentJob))
+                        Job.Properties.TRAILER_PLACE.propertyName -> {
+                            newSaveData.append(if (!useEmptyJob) Job.Properties.TRAILER_PLACE.formatValue(currentJob) else Job.Properties.TRAILER_PLACE.defaultValue())
+                            newLineHasValue = true
+                        }
+                        else -> {
+                            for (property in Job.Properties.values()) {
+                                if (name == property.propertyName) {
+                                    newSaveData.append(if (!useEmptyJob) property.formatValue(currentJob) else property.defaultValue())
                                     newLineHasValue = true
-                                }
-                                else if (property.hasDefault) {
-                                    newSaveData.append(property.defaultValue())
-                                    newLineHasValue = true
+                                    break
                                 }
                             }
                         }
                     }
                 }
-                if (!newLineHasValue) {
-                    newSaveData.append(sourceValue)
+                if (Job.Properties.notList(name)) {
+                    if (!newLineHasValue) {
+                        newSaveData.append(sourceValue)
+                    }
+                    newSaveData.append("\r\n")
                 }
-                newSaveData.append("\r\n")
             }
         })
         newSaveData.append("\r\n}\r\n")
