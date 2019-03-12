@@ -111,16 +111,13 @@ class Save(
     fun replaceJobs(jobs: Map<String, List<Job>>): Boolean {
         var currentCompany: String
         val newSaveData = StringBuilder("SiiNunit\r\n{")
-        var inEconomy = false
         var inJob = false
-        var hasGameTime = false
         var newLineHasValue = false
         var jobsAdded = 0
         var companyJobIndex = 0
 
         var companyJobs: List<Job> = Collections.emptyList()
-        var currentJob = Job("", 0, 0, 0, 0, 0,
-            "", "", "", "", 0, 0, Collections.emptyList())
+        var currentJob = Job.Builder().build()
         var useEmptyJob = false
 
         val save = directory.resolve(SAVE_BASENAME)
@@ -165,6 +162,7 @@ class Save(
                         Job.Properties.EXPIRATION_TIME.propertyName -> {
                             newSaveData.append(if (!useEmptyJob) gameTime + 30000 else Job.Properties.EXPIRATION_TIME.defaultValue())
                             newLineHasValue = true
+                            jobsAdded++
                         }
                         Job.Properties.TRAILER_PLACE.propertyName -> {
                             newSaveData.append(if (!useEmptyJob) Job.Properties.TRAILER_PLACE.formatValue(currentJob) else Job.Properties.TRAILER_PLACE.defaultValue())

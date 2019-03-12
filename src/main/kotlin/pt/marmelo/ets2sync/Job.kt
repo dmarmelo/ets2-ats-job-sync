@@ -3,7 +3,7 @@ package pt.marmelo.ets2sync
 import com.fasterxml.jackson.annotation.JsonIgnore
 import pt.marmelo.ets2sync.util.readPropery
 
-class Job(
+data class Job(
     val target: String,
     @JsonIgnore
     val expirationTime: Long,
@@ -20,16 +20,16 @@ class Job(
     val trailerPlace: List<String>
 ) {
     class Builder {
-        lateinit var target: String
+        var target: String = ""
         var expirationTime: Long = 0
         var urgency: Int = 0
         var shortestDistanceKm: Int = 0
         var ferryTime: Int = 0
         var ferryPrice: Int = 0
-        lateinit var cargo: String
-        lateinit var companyTruck: String
-        lateinit var trailerVariant: String
-        lateinit var trailerDefinition: String
+        var cargo: String = ""
+        var companyTruck: String = ""
+        var trailerVariant: String = ""
+        var trailerDefinition: String = ""
         var unitsCount: Int = 0
         var fillRatio: Int = 0
         var trailerPlace: MutableList<String> = ArrayList()
