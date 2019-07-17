@@ -1,5 +1,6 @@
 package pt.marmelo.ets2sync.util
 
+import java.text.Normalizer
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
@@ -39,4 +40,9 @@ fun <T: Any?>String.callSelfParser(destClazz: KClass<*>): Any? {
     }
     val parsingMethod: KFunction<*> = this::class.functions.first { it.name == methodName }
     return parsingMethod.call(this)
+}
+
+fun CharSequence.removeAccents(): String {
+    return Normalizer.normalize(this, Normalizer.Form.NFD)
+        .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
 }
