@@ -21,7 +21,7 @@ class Info(
         get() = _profiles.toList()
 
     init {
-        val profilesDir = getDefaultDirectory().resolve("profiles")
+        val profilesDir = getDefaultDirectory().resolve(PROFILES_DIR)
         Files.walk(profilesDir, 1)
             .filter { f -> f != profilesDir } // skip root
             .filter { f -> Files.isDirectory(f) }

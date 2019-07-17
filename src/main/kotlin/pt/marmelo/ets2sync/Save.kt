@@ -138,6 +138,9 @@ class Save(
                     inJob = true
                     if(companyJobIndex < companyJobs.size) {
                         currentJob = companyJobs[companyJobIndex]
+                        // To allow job replacing on offline game
+                        if (currentJob.cargo.contains("caravan"))
+                            useEmptyJob = true
                     }
                     else {
                         useEmptyJob = true
