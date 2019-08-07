@@ -1,4 +1,4 @@
-package pt.marmelo.ets2sync
+package pt.marmelo.ets2sync.data
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import pt.marmelo.ets2sync.util.readPropery
@@ -55,8 +55,10 @@ data class Job(
         fun fillRatio(fillRatio: String) = fillRatio(fillRatio.toInt())
         fun addTrailerPlace(trailerPlace: String) = apply { this.trailerPlace.add(trailerPlace) }
 
-        fun build() = Job(target, expirationTime, urgency, shortestDistanceKm, ferryTime, ferryPrice, cargo, companyTruck,
-            trailerVariant, trailerDefinition, unitsCount, fillRatio, trailerPlace)
+        fun build() = Job(
+            target, expirationTime, urgency, shortestDistanceKm, ferryTime, ferryPrice, cargo, companyTruck,
+            trailerVariant, trailerDefinition, unitsCount, fillRatio, trailerPlace
+        )
     }
 
     enum class Properties {
