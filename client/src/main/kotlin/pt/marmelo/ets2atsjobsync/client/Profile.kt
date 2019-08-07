@@ -41,8 +41,8 @@ class Profile(
             if (name == MAP_ATTRIBUTE) {
                 when(value) {
                     // TODO validate
-                    Game.ETS2.mapValue -> _game = Game.ETS2
-                    Game.ATS.mapValue -> _game = Game.ATS
+                    Game.ETS2.mapValue -> game = Game.ETS2
+                    Game.ATS.mapValue -> game = Game.ATS
                 }
             }
         }

@@ -63,13 +63,12 @@ data class Job(
             this.quotedIfContains = quotedIfContains
         }
 
-        private var _isList: Boolean = false
-        val isList: Boolean
-            get() = _isList
+        var isList: Boolean = false
+            private set
 
         constructor(propertyName: String, isList: Boolean) {
             this.propertyName = propertyName
-            this._isList = isList
+            this.isList = isList
         }
 
         fun formatValue(job: Job): String {

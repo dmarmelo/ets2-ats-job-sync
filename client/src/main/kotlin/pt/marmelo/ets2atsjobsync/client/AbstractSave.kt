@@ -12,24 +12,20 @@ abstract class AbstractSave(
     val saveTimeAttribute: String
 ) : Comparable<AbstractSave> {
 
-    protected var _game: Game = Game.INVALID
-    val game: Game
-        get() = _game
+    var game: Game = Game.INVALID
+        protected set
 
-    private lateinit var _name: String
-    val name: String
-        get() = _name
+    lateinit var name: String
+        private set
 
-    private lateinit var _saveTime: Instant
-    val saveTime: Instant
-        get() = _saveTime
+    lateinit var saveTime: Instant
+        private set
 
-    private var _isValid: Boolean = false
-    val isValid: Boolean
+    var isValid: Boolean = false
         get() {
-            if (!_isValid)
-                _isValid = validate()
-            return _isValid
+            if (!field)
+                field = validate()
+            return field
         }
 
     // This is used to load and process the file passed as siiFileBasename to the constructor from the directory.
@@ -39,8 +35,8 @@ abstract class AbstractSave(
         SiiFile(save).parse(ParseCallback { context, name, value, _, _ ->
             if (context == Context.ATTRIBUTE) {
                 when (name) {
-                    nameAttribute -> _name = value
-                    saveTimeAttribute -> _saveTime = Instant.ofEpochSecond(value.toLong())
+                    nameAttribute -> this.name = value
+                    saveTimeAttribute -> saveTime = Instant.ofEpochSecond(value.toLong())
                 }
             }
             processAtribute(context, name, value)

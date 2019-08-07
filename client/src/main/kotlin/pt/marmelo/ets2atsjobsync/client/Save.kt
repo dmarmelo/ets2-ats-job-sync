@@ -26,16 +26,15 @@ class Save(
         const val COMPANY_NAME_PREFIX = "company.volatile."
     }
 
-    private var _gameTime: Long = 0
-    val gameTime: Long
-        get() = _gameTime
+    var gameTime: Long = 0
+        private set
 
     private var _dlcs: MutableList<String> = ArrayList()
     val dlcs: List<String>
         get() = _dlcs.toList()
 
     init {
-        _game = game
+        this.game = game
         init()
     }
 
@@ -47,7 +46,7 @@ class Save(
                 _dlcs.add(dlcName)
             }
             else if (name == INFO_GAME_TIME_ATTRIBUTE) {
-                _gameTime = value.toLong()
+                gameTime = value.toLong()
             }
         }
     }
