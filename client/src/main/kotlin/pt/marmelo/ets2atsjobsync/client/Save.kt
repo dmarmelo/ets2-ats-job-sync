@@ -56,7 +56,7 @@ class Save(
         val jobs: MutableMap<String, MutableList<Job>> = HashMap()
         var inJob = false
         var skipJob = false
-        var job: Job.Builder = Job.Builder()
+        var job = Job()
         var currentCompany = ""
 
         val save = directory.resolve(SAVE_BASENAME)
@@ -67,12 +67,12 @@ class Save(
                     jobs[currentCompany] = ArrayList()
                 } else if (name == JOB_UNIT) {
                     inJob = true
-                    job = Job.Builder()
+                    job = Job()
                 }
             } else if (context == Context.UNIT_END) {
                 if (inJob) {
                     if (!skipJob)
-                        jobs[currentCompany]!!.add(job.build())
+                        jobs[currentCompany]!!.add(job)
                     inJob = false
                     skipJob = false
                 }
@@ -83,19 +83,19 @@ class Save(
                             if (value.isEmpty())
                                 skipJob = true
                             else
-                                job.target(value)
+                                job.target = value
                         }
-                        Job.Properties.EXPIRATION_TIME.propertyName -> job.expirationTime(value)
-                        Job.Properties.URGENCY.propertyName -> job.urgency(value)
-                        Job.Properties.DISTANCE.propertyName -> job.shortestDistanceKm(value)
-                        Job.Properties.FERRY_TIME.propertyName -> job.ferryTime(value)
-                        Job.Properties.FERRY_PRICE.propertyName -> job.ferryPrice(value)
-                        Job.Properties.CARGO.propertyName -> job.cargo(value)
-                        Job.Properties.COMPANY_TRUCK.propertyName -> job.companyTruck(value)
-                        Job.Properties.TRAILER_VARIANT.propertyName -> job.trailerVariant(value)
-                        Job.Properties.TRAILER_DEFINITION.propertyName -> job.trailerDefinition(value)
-                        Job.Properties.UNITS_COUNT.propertyName -> job.unitsCount(value)
-                        Job.Properties.FILL_RATIO.propertyName -> job.fillRatio(value)
+                        Job.Properties.EXPIRATION_TIME.propertyName -> job.expirationTime = value.toLong()
+                        Job.Properties.URGENCY.propertyName -> job.urgency = value.toInt()
+                        Job.Properties.DISTANCE.propertyName -> job.shortestDistanceKm = value.toInt()
+                        Job.Properties.FERRY_TIME.propertyName -> job.ferryTime = value.toInt()
+                        Job.Properties.FERRY_PRICE.propertyName -> job.ferryPrice = value.toInt()
+                        Job.Properties.CARGO.propertyName -> job.cargo = value
+                        Job.Properties.COMPANY_TRUCK.propertyName -> job.companyTruck = value
+                        Job.Properties.TRAILER_VARIANT.propertyName -> job.trailerVariant = value
+                        Job.Properties.TRAILER_DEFINITION.propertyName -> job.trailerDefinition = value
+                        Job.Properties.UNITS_COUNT.propertyName -> job.unitsCount = value.toInt()
+                        Job.Properties.FILL_RATIO.propertyName -> job.fillRatio = value.toInt()
                     }
                     if (name.startsWith(Job.Properties.TRAILER_PLACE.propertyName + "[")) {
                         job.addTrailerPlace(value)
@@ -115,7 +115,7 @@ class Save(
         var companyJobIndex = 0
 
         var companyJobs: List<Job> = Collections.emptyList()
-        var currentJob = Job.Builder().build()
+        var currentJob = Job()
         var useEmptyJob = false
 
         val save = directory.resolve(SAVE_BASENAME)
