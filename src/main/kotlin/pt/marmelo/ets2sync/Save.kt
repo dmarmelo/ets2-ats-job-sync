@@ -1,5 +1,6 @@
 package pt.marmelo.ets2sync
 
+import pt.marmelo.ets2sync.data.Job
 import pt.marmelo.ets2sync.parser.Context
 import pt.marmelo.ets2sync.parser.ParseCallback
 import java.nio.file.Files
@@ -11,7 +12,7 @@ class Save(
     game: Game,
     directory: Path
 ) : AbstractSave(directory, SII_BASENAME, NAME_ATTRIBUTE, SAVE_TIME_ATTRIBUTE) {
-    private companion object {
+    companion object {
         const val SII_BASENAME = "info.sii"
         const val SAVE_BASENAME = "game.sii"
         const val NAME_ATTRIBUTE = "name"
@@ -112,7 +113,7 @@ class Save(
         var currentCompany: String
         val newSaveData = StringBuilder("SiiNunit\r\n{")
         var inJob = false
-        var newLineHasValue = false
+        var newLineHasValue: Boolean
         var jobsAdded = 0
         var companyJobIndex = 0
 
@@ -125,7 +126,7 @@ class Save(
             if (context == Context.UNIT_START) {
                 newSaveData.append("\r\n").append(name).append(" : ").append(value).append(" {\r\n")
                 if (name == COMPANY_UNIT) {
-                    currentCompany = value.replace(COMPANY_NAME_PREFIX, "")
+                    currentCompany = value.substring("company.volatile.".length)
                     if (jobs.containsKey(currentCompany)) {
                         companyJobs = jobs.getValue(currentCompany)
                     }
