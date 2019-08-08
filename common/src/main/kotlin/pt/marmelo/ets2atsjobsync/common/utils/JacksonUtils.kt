@@ -1,4 +1,4 @@
-package pt.marmelo.ets2atsjobsync.client.utils
+package pt.marmelo.ets2atsjobsync.common.utils
 
 import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.JsonNode
