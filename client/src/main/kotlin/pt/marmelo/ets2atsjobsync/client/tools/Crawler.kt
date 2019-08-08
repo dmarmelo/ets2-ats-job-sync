@@ -1,11 +1,9 @@
 package pt.marmelo.ets2atsjobsync.client.tools
 
 import org.jsoup.Jsoup
-import pt.marmelo.ets2atsjobsync.client.Game
 import pt.marmelo.ets2atsjobsync.client.data.City
-import pt.marmelo.ets2atsjobsync.client.dlc.BaseDlc
-import pt.marmelo.ets2atsjobsync.client.dlc.Dlc
-import pt.marmelo.ets2atsjobsync.client.dlc.Ets2Dlc
+import pt.marmelo.ets2atsjobsync.common.Dlc
+import pt.marmelo.ets2atsjobsync.common.Game
 import java.io.File
 import java.nio.file.Files
 
@@ -32,12 +30,12 @@ fun cities(game: Game) : List<City> {
             //println("${td[0].text()},${td[1].text()},${td[2].text()},${td[4].text()}")
             val dlc: Dlc = with(td[4].text().toLowerCase()) {
                 when {
-                    contains("east") -> Ets2Dlc.GOING_EAST
-                    contains("scandinavia") -> Ets2Dlc.SCANDINAVIA
-                    contains("france") -> Ets2Dlc.FRANCE
-                    contains("italia") -> Ets2Dlc.ITALIA
-                    contains("baltic") -> Ets2Dlc.BALTIC
-                    else -> BaseDlc.BASE_GAME
+                    contains("east") -> Dlc.GOING_EAST
+                    contains("scandinavia") -> Dlc.SCANDINAVIA
+                    contains("france") -> Dlc.FRANCE
+                    contains("italia") -> Dlc.ITALIA
+                    contains("baltic") -> Dlc.BALTIC
+                    else -> Dlc.BASE_GAME
                 }
             }
             cities.add(City(td[0].text(), td[1].text(), td[2].text().toInt(), dlc))

@@ -1,4 +1,4 @@
-package pt.marmelo.ets2atsjobsync.client
+package pt.marmelo.ets2atsjobsync.common
 
 enum class Game(
     val saveDirName: String,

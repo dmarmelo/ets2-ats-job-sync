@@ -1,6 +1,7 @@
 package pt.marmelo.ets2atsjobsync.client
 
 import pt.marmelo.ets2atsjobsync.client.data.Job
+import pt.marmelo.ets2atsjobsync.common.Game
 import pt.marmelo.ets2atsjobsync.parser.Context
 import pt.marmelo.ets2atsjobsync.parser.ParseCallback
 import java.nio.file.Files

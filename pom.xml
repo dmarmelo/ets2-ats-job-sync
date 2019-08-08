@@ -13,8 +13,19 @@
     <description>ETS2 ATS Job Sync</description>
 
     <modules>
+        <module>common</module>
         <module>backend</module>
         <module>client</module>
     </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>pt.marmelo</groupId>
+                <artifactId>common</artifactId>
+                <version>1.0-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

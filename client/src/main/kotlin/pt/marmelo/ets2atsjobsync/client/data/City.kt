@@ -1,7 +1,7 @@
 package pt.marmelo.ets2atsjobsync.client.data
 
-import pt.marmelo.ets2atsjobsync.client.dlc.Dlc
 import pt.marmelo.ets2atsjobsync.client.util.removeAccents
+import pt.marmelo.ets2atsjobsync.common.Dlc
 
 data class City(
     val name: String,
