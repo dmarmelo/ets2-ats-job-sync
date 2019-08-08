@@ -1,9 +1,7 @@
 package pt.marmelo.ets2atsjobsync.backend.domain
 
-import javax.persistence.CascadeType
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.OneToMany
+import pt.marmelo.ets2atsjobsync.common.Game
+import javax.persistence.*
 
 @Entity
 data class CountryOrState(
@@ -14,6 +12,8 @@ data class CountryOrState(
                 fetch = FetchType.LAZY,
                 orphanRemoval = true
         )
-        val cities: MutableSet<City>
+        val cities: MutableSet<City>,
+        @Enumerated(EnumType.STRING)
+        val game: Game
 ) : DomainObject() {
 }

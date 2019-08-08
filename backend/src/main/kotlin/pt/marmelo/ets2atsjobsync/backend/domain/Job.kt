@@ -1,14 +1,13 @@
 package pt.marmelo.ets2atsjobsync.backend.domain
 
-import javax.persistence.Entity
-import javax.persistence.FetchType
-import javax.persistence.JoinColumn
-import javax.persistence.ManyToOne
+import org.hibernate.annotations.NaturalId
+import pt.marmelo.ets2atsjobsync.backend.domain.converter.CommaDelimitedStrings
+import javax.persistence.*
 
 @Entity
 data class Job(
-        @ManyToOne(fetch = FetchType.EAGER)
-        @JoinColumn(name = "target_id")
+        @ManyToOne(fetch = FetchType.EAGER, optional = false)
+        @JoinColumn(name = "target_id", nullable = false)
         val target: Company,
         val urgency: Int,
         val shortestDistanceKm: Int,
@@ -21,8 +20,11 @@ data class Job(
         val trailerVariant: String,
         val trailerDefinition: String,
         val unitsCount: Int,
-        val fillRatio: Int
-        //val trailerPlace: MutableList<String>
+        val fillRatio: Int,
+        @Convert(converter = CommaDelimitedStrings::class)
+        val trailerPlace: MutableList<String>,
+        @NaturalId
+        val hash: String // calculate the hash of the json to compare if it already exists
 ) : DomainObject() {
 
     val isHighPowerCargo: Boolean
