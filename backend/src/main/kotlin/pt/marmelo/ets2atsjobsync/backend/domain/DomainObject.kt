@@ -1,8 +1,8 @@
 package pt.marmelo.ets2atsjobsync.backend.domain
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import org.springframework.data.annotation.CreatedDate
-import org.springframework.data.annotation.LastModifiedDate
+import org.hibernate.annotations.CreationTimestamp
+import org.hibernate.annotations.UpdateTimestamp
 import java.io.Serializable
 import java.time.Instant
 import javax.persistence.*
@@ -16,11 +16,11 @@ abstract class DomainObject : Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0
 
-    @CreatedDate
+    @CreationTimestamp
     @Column(nullable = false, updatable = false)
     val createdAt: Instant? = null
 
-    @LastModifiedDate
+    @UpdateTimestamp
     @Column(nullable = false)
     val updatedAt: Instant? = null
 }
