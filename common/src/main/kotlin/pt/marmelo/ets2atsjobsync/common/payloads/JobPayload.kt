@@ -1,22 +1,22 @@
-package pt.marmelo.ets2atsjobsync.common.payload
+package pt.marmelo.ets2atsjobsync.common.payloads
 
 import pt.marmelo.ets2atsjobsync.common.utils.readPropery
 
-data class Job(
-        var target: String = "",
-        /*@JsonIgnore
-        var expirationTime: Long = 0,*/
-        var urgency: Int = 0,
-        var shortestDistanceKm: Int = 0,
-        var ferryTime: Int = 0,
-        var ferryPrice: Int = 0,
-        var cargo: String = "",
-        var companyTruck: String = "",
-        var trailerVariant: String = "",
-        var trailerDefinition: String = "",
-        var unitsCount: Int = 0,
-        var fillRatio: Int = 0,
-        var trailerPlace: MutableList<String> = ArrayList()
+data class JobPayload(
+    var target: String = "",
+    /*@JsonIgnore
+    var expirationTime: Long = 0,*/
+    var urgency: Int = 0,
+    var shortestDistanceKm: Int = 0,
+    var ferryTime: Int = 0,
+    var ferryPrice: Int = 0,
+    var cargo: String = "",
+    var companyTruck: String = "",
+    var trailerVariant: String = "",
+    var trailerDefinition: String = "",
+    var unitsCount: Int = 0,
+    var fillRatio: Int = 0,
+    var trailerPlace: MutableList<String> = ArrayList()
 ) {
     fun addTrailerPlace(trailerPlace: String) = this.trailerPlace.add(trailerPlace)
 
@@ -70,7 +70,7 @@ data class Job(
             this.isList = isList
         }
 
-        fun formatValue(job: Job): String {
+        fun formatValue(job: JobPayload): String {
             return if (isList) {
                 val value = job.readPropery<List<*>>(jobPropertyName)
                 val formattedList = StringBuilder()

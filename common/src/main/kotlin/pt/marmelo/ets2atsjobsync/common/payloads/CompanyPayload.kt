@@ -1,6 +1,6 @@
-package pt.marmelo.ets2atsjobsync.common.payload
+package pt.marmelo.ets2atsjobsync.common.payloads
 
-data class Company(
+data class CompanyPayload(
     val name: String,
     val city: String,
     val cargoSlots: Int

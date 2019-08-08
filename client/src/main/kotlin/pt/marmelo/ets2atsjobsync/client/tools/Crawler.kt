@@ -3,11 +3,11 @@ package pt.marmelo.ets2atsjobsync.client.tools
 import org.jsoup.Jsoup
 import pt.marmelo.ets2atsjobsync.common.Dlc
 import pt.marmelo.ets2atsjobsync.common.Game
-import pt.marmelo.ets2atsjobsync.common.payload.City
+import pt.marmelo.ets2atsjobsync.common.payloads.CityPayload
 import java.io.File
 import java.nio.file.Files
 
-fun cities(game: Game) : List<City> {
+fun cities(game: Game) : List<CityPayload> {
     if (game == Game.INVALID)
         return emptyList()
 
@@ -15,7 +15,7 @@ fun cities(game: Game) : List<City> {
     val table = html.select("table.article-table")[0]
     val rows = table.select("tr")
 
-    val cities = mutableListOf<City>()
+    val cities = mutableListOf<CityPayload>()
     for (row in rows) {
         var td = row.select("td")
         if (td.size == 0) { // If true means it is the header row
@@ -38,7 +38,7 @@ fun cities(game: Game) : List<City> {
                     else -> Dlc.BASE_GAME
                 }
             }
-            cities.add(City(td[0].text(), td[1].text(), td[2].text().toInt(), dlc))
+            cities.add(CityPayload(td[0].text(), td[1].text(), td[2].text().toInt(), dlc))
         }
     }
     return cities.sortedBy { it.internalId }

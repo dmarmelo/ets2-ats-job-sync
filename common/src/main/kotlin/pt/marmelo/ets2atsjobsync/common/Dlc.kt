@@ -1,9 +1,9 @@
 package pt.marmelo.ets2atsjobsync.common
 
 enum class Dlc(
-        val game: Game?,
-        val id: String,
-        val title: String
+    val game: Game?,
+    val id: String,
+    val title: String
 ) {
     // COMMON
     BASE_GAME(null, "base", "Base Game"),

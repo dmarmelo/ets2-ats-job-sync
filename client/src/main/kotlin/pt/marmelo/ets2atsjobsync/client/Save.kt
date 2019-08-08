@@ -1,7 +1,7 @@
 package pt.marmelo.ets2atsjobsync.client
 
 import pt.marmelo.ets2atsjobsync.common.Game
-import pt.marmelo.ets2atsjobsync.common.payload.Job
+import pt.marmelo.ets2atsjobsync.common.payloads.JobPayload
 import pt.marmelo.ets2atsjobsync.parser.Context
 import pt.marmelo.ets2atsjobsync.parser.ParseCallback
 import java.nio.file.Files
@@ -10,8 +10,8 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class Save(
-        game: Game,
-        directory: Path
+    game: Game,
+    directory: Path
 ) : AbstractSave(directory, SII_BASENAME, NAME_ATTRIBUTE, SAVE_TIME_ATTRIBUTE) {
     companion object {
         const val SII_BASENAME = "info.sii"
@@ -52,11 +52,11 @@ class Save(
         }
     }
 
-    fun extractJobs(): Map<String, List<Job>> {
-        val jobs: MutableMap<String, MutableList<Job>> = HashMap()
+    fun extractJobs(): Map<String, List<JobPayload>> {
+        val jobs: MutableMap<String, MutableList<JobPayload>> = HashMap()
         var inJob = false
         var skipJob = false
-        var job = Job()
+        var job = JobPayload()
         var currentCompany = ""
 
         val save = directory.resolve(SAVE_BASENAME)
@@ -67,7 +67,7 @@ class Save(
                     jobs[currentCompany] = ArrayList()
                 } else if (name == JOB_UNIT) {
                     inJob = true
-                    job = Job()
+                    job = JobPayload()
                 }
             } else if (context == Context.UNIT_END) {
                 if (inJob) {
@@ -79,25 +79,25 @@ class Save(
             } else if (context == Context.ATTRIBUTE) {
                 if (inJob && !skipJob) {
                     when (name) {
-                        Job.Properties.TARGET.propertyName -> {
+                        JobPayload.Properties.TARGET.propertyName -> {
                             if (value.isEmpty())
                                 skipJob = true
                             else
                                 job.target = value
                         }
                         //Job.Properties.EXPIRATION_TIME.propertyName -> job.expirationTime = value.toLong()
-                        Job.Properties.URGENCY.propertyName -> job.urgency = value.toInt()
-                        Job.Properties.DISTANCE.propertyName -> job.shortestDistanceKm = value.toInt()
-                        Job.Properties.FERRY_TIME.propertyName -> job.ferryTime = value.toInt()
-                        Job.Properties.FERRY_PRICE.propertyName -> job.ferryPrice = value.toInt()
-                        Job.Properties.CARGO.propertyName -> job.cargo = value
-                        Job.Properties.COMPANY_TRUCK.propertyName -> job.companyTruck = value
-                        Job.Properties.TRAILER_VARIANT.propertyName -> job.trailerVariant = value
-                        Job.Properties.TRAILER_DEFINITION.propertyName -> job.trailerDefinition = value
-                        Job.Properties.UNITS_COUNT.propertyName -> job.unitsCount = value.toInt()
-                        Job.Properties.FILL_RATIO.propertyName -> job.fillRatio = value.toInt()
+                        JobPayload.Properties.URGENCY.propertyName -> job.urgency = value.toInt()
+                        JobPayload.Properties.DISTANCE.propertyName -> job.shortestDistanceKm = value.toInt()
+                        JobPayload.Properties.FERRY_TIME.propertyName -> job.ferryTime = value.toInt()
+                        JobPayload.Properties.FERRY_PRICE.propertyName -> job.ferryPrice = value.toInt()
+                        JobPayload.Properties.CARGO.propertyName -> job.cargo = value
+                        JobPayload.Properties.COMPANY_TRUCK.propertyName -> job.companyTruck = value
+                        JobPayload.Properties.TRAILER_VARIANT.propertyName -> job.trailerVariant = value
+                        JobPayload.Properties.TRAILER_DEFINITION.propertyName -> job.trailerDefinition = value
+                        JobPayload.Properties.UNITS_COUNT.propertyName -> job.unitsCount = value.toInt()
+                        JobPayload.Properties.FILL_RATIO.propertyName -> job.fillRatio = value.toInt()
                     }
-                    if (name.startsWith(Job.Properties.TRAILER_PLACE.propertyName + "[")) {
+                    if (name.startsWith(JobPayload.Properties.TRAILER_PLACE.propertyName + "[")) {
                         job.addTrailerPlace(value)
                     }
                 }
@@ -106,7 +106,7 @@ class Save(
         return jobs
     }
 
-    fun replaceJobs(jobs: Map<String, List<Job>>): Boolean {
+    fun replaceJobs(jobs: Map<String, List<JobPayload>>): Boolean {
         var currentCompany: String
         val newSaveData = StringBuilder("SiiNunit\r\n{")
         var inJob = false
@@ -114,8 +114,8 @@ class Save(
         var jobsAdded = 0
         var companyJobIndex = 0
 
-        var companyJobs: List<Job> = Collections.emptyList()
-        var currentJob = Job()
+        var companyJobs: List<JobPayload> = Collections.emptyList()
+        var currentJob = JobPayload()
         var useEmptyJob = false
 
         val save = directory.resolve(SAVE_BASENAME)
@@ -149,23 +149,23 @@ class Save(
                 }
                 newSaveData.append("}\r\n")
             } else if (context == Context.ATTRIBUTE) {
-                if (!inJob || Job.Properties.notList(name)) {
+                if (!inJob || JobPayload.Properties.notList(name)) {
                     newSaveData.append(" ").append(name).append(": ")
                 }
                 newLineHasValue = false
                 if (inJob) {
                     when (name) {
-                        Job.Properties.EXPIRATION_TIME.propertyName -> {
-                            newSaveData.append(if (!useEmptyJob) gameTime + 30000 else Job.Properties.EXPIRATION_TIME.defaultValue())
+                        JobPayload.Properties.EXPIRATION_TIME.propertyName -> {
+                            newSaveData.append(if (!useEmptyJob) gameTime + 30000 else JobPayload.Properties.EXPIRATION_TIME.defaultValue())
                             newLineHasValue = true
                             jobsAdded++
                         }
-                        Job.Properties.TRAILER_PLACE.propertyName -> {
-                            newSaveData.append(if (!useEmptyJob) Job.Properties.TRAILER_PLACE.formatValue(currentJob) else Job.Properties.TRAILER_PLACE.defaultValue())
+                        JobPayload.Properties.TRAILER_PLACE.propertyName -> {
+                            newSaveData.append(if (!useEmptyJob) JobPayload.Properties.TRAILER_PLACE.formatValue(currentJob) else JobPayload.Properties.TRAILER_PLACE.defaultValue())
                             newLineHasValue = true
                         }
                         else -> {
-                            for (property in Job.Properties.values()) {
+                            for (property in JobPayload.Properties.values()) {
                                 if (name == property.propertyName) {
                                     newSaveData.append(if (!useEmptyJob) property.formatValue(currentJob) else property.defaultValue())
                                     newLineHasValue = true
@@ -175,7 +175,7 @@ class Save(
                         }
                     }
                 }
-                if (Job.Properties.notList(name)) {
+                if (JobPayload.Properties.notList(name)) {
                     if (!newLineHasValue) {
                         newSaveData.append(sourceValue)
                     }

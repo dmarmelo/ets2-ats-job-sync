@@ -2,13 +2,13 @@ package pt.marmelo.ets2atsjobsync.client.tools
 
 import pt.marmelo.ets2atsjobsync.client.Save
 import pt.marmelo.ets2atsjobsync.client.SiiFile
-import pt.marmelo.ets2atsjobsync.common.payload.Company
+import pt.marmelo.ets2atsjobsync.common.payloads.CompanyPayload
 import pt.marmelo.ets2atsjobsync.parser.Context
 import pt.marmelo.ets2atsjobsync.parser.ParseCallback
 import java.io.File
 
-fun extractCompanies(save: File) : List<Company> {
-    val companies = mutableListOf<Company>()
+fun extractCompanies(save: File) : List<CompanyPayload> {
+    val companies = mutableListOf<CompanyPayload>()
     var inCompany = false
     var currentCompany = ""
     SiiFile(save.toPath()).parse(ParseCallback { context, name, value, _, _ ->
@@ -24,7 +24,7 @@ fun extractCompanies(save: File) : List<Company> {
         } else if (context == Context.ATTRIBUTE) {
             if (inCompany) {
                 if (name == "job_offer") {
-                    companies.add(Company(currentCompany.substringBefore('.'), currentCompany.substringAfter('.'), value.toInt()))
+                    companies.add(CompanyPayload(currentCompany.substringBefore('.'), currentCompany.substringAfter('.'), value.toInt()))
                 }
             }
         }

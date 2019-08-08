@@ -1,9 +1,9 @@
-package pt.marmelo.ets2atsjobsync.common.payload
+package pt.marmelo.ets2atsjobsync.common.payloads
 
 import pt.marmelo.ets2atsjobsync.common.Dlc
 import pt.marmelo.ets2atsjobsync.common.utils.removeAccents
 
-data class City(
+data class CityPayload(
     val name: String,
     val countryOrState: String,
     val numOfCompanies: Int,
