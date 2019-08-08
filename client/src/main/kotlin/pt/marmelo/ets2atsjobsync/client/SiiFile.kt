@@ -1,6 +1,6 @@
 package pt.marmelo.ets2atsjobsync.client
 
-import pt.marmelo.ets2atsjobsync.client.util.byteArrayOfInts
+import pt.marmelo.ets2atsjobsync.common.utils.byteArrayOfInts
 import pt.marmelo.ets2atsjobsync.parser.ParseCallback
 import pt.marmelo.ets2atsjobsync.parser.SiiTextParser
 import java.nio.ByteBuffer

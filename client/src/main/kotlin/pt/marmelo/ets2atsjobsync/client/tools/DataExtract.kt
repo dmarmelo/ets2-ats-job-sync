@@ -2,7 +2,7 @@ package pt.marmelo.ets2atsjobsync.client.tools
 
 import pt.marmelo.ets2atsjobsync.client.Save
 import pt.marmelo.ets2atsjobsync.client.SiiFile
-import pt.marmelo.ets2atsjobsync.client.data.Company
+import pt.marmelo.ets2atsjobsync.common.payload.Company
 import pt.marmelo.ets2atsjobsync.parser.Context
 import pt.marmelo.ets2atsjobsync.parser.ParseCallback
 import java.io.File

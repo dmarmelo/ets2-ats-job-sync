@@ -1,4 +1,4 @@
-package pt.marmelo.ets2atsjobsync.client.data
+package pt.marmelo.ets2atsjobsync.common.payload
 
 data class Company(
     val name: String,

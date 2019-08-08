@@ -1,4 +1,4 @@
-package pt.marmelo.ets2atsjobsync.client.util
+package pt.marmelo.ets2atsjobsync.common.utils
 
 import java.text.Normalizer
 import kotlin.reflect.KClass

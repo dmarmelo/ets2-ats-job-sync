@@ -1,12 +1,11 @@
-package pt.marmelo.ets2atsjobsync.client.data
+package pt.marmelo.ets2atsjobsync.common.payload
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import pt.marmelo.ets2atsjobsync.client.util.readPropery
+import pt.marmelo.ets2atsjobsync.common.utils.readPropery
 
 data class Job(
         var target: String = "",
-        @JsonIgnore
-        var expirationTime: Long = 0,
+        /*@JsonIgnore
+        var expirationTime: Long = 0,*/
         var urgency: Int = 0,
         var shortestDistanceKm: Int = 0,
         var ferryTime: Int = 0,

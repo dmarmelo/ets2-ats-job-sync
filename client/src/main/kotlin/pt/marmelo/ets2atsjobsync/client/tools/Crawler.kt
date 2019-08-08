@@ -1,9 +1,9 @@
 package pt.marmelo.ets2atsjobsync.client.tools
 
 import org.jsoup.Jsoup
-import pt.marmelo.ets2atsjobsync.client.data.City
 import pt.marmelo.ets2atsjobsync.common.Dlc
 import pt.marmelo.ets2atsjobsync.common.Game
+import pt.marmelo.ets2atsjobsync.common.payload.City
 import java.io.File
 import java.nio.file.Files
 

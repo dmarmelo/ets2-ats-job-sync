@@ -1,7 +1,7 @@
 package pt.marmelo.ets2atsjobsync.client
 
-import pt.marmelo.ets2atsjobsync.client.data.Job
 import pt.marmelo.ets2atsjobsync.common.Game
+import pt.marmelo.ets2atsjobsync.common.payload.Job
 import pt.marmelo.ets2atsjobsync.parser.Context
 import pt.marmelo.ets2atsjobsync.parser.ParseCallback
 import java.nio.file.Files
@@ -85,7 +85,7 @@ class Save(
                             else
                                 job.target = value
                         }
-                        Job.Properties.EXPIRATION_TIME.propertyName -> job.expirationTime = value.toLong()
+                        //Job.Properties.EXPIRATION_TIME.propertyName -> job.expirationTime = value.toLong()
                         Job.Properties.URGENCY.propertyName -> job.urgency = value.toInt()
                         Job.Properties.DISTANCE.propertyName -> job.shortestDistanceKm = value.toInt()
                         Job.Properties.FERRY_TIME.propertyName -> job.ferryTime = value.toInt()
