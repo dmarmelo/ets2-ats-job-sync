@@ -8,7 +8,18 @@ import java.util.*
 import javax.annotation.PostConstruct
 
 @SpringBootApplication
-class Ets2AtsJobSyncApplication
+class Ets2AtsJobSyncApplication {
+
+    @PostConstruct
+    fun init() {
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"))
+    }
+
+    @Bean
+    fun run() = CommandLineRunner {
+        //println("HERE HERE HERE HERE")
+    }
+}
 
 fun main(args: Array<String>) {
     runApplication<Ets2AtsJobSyncApplication>(*args)
