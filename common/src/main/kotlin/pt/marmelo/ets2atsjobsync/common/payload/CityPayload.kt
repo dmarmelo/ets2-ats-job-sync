@@ -1,5 +1,6 @@
-package pt.marmelo.ets2atsjobsync.common.payloads
+package pt.marmelo.ets2atsjobsync.common.payload
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import pt.marmelo.ets2atsjobsync.common.Dlc
 import pt.marmelo.ets2atsjobsync.common.utils.removeAccents
 
@@ -9,6 +10,7 @@ data class CityPayload(
     val numOfCompanies: Int,
     val dlc: Dlc
 ) {
+    @get:JsonIgnore
     val internalId: String
         get() {
             return when(val internalId = convertSpecialCharacters(name.toLowerCase().removeAccents().replace(" ", ""))) {

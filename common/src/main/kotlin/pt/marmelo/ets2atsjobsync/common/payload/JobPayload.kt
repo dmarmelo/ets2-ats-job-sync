@@ -1,4 +1,4 @@
-package pt.marmelo.ets2atsjobsync.common.payloads
+package pt.marmelo.ets2atsjobsync.common.payload
 
 import pt.marmelo.ets2atsjobsync.common.utils.readPropery
 

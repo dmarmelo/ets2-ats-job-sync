@@ -8,8 +8,8 @@ data class Company(
     @NaturalId
     val internalId: String, // <name>.<city>
     val name: String,
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "city_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "city_id", nullable = false)
     val city: City,
     val cargoSlots: Int,
     @OneToMany(

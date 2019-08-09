@@ -3,7 +3,8 @@ package pt.marmelo.ets2atsjobsync.client.tools
 import org.jsoup.Jsoup
 import pt.marmelo.ets2atsjobsync.common.Dlc
 import pt.marmelo.ets2atsjobsync.common.Game
-import pt.marmelo.ets2atsjobsync.common.payloads.CityPayload
+import pt.marmelo.ets2atsjobsync.common.payload.CityPayload
+import pt.marmelo.ets2atsjobsync.common.utils.JacksonUtils
 import java.io.File
 import java.nio.file.Files
 
@@ -50,11 +51,16 @@ fun exportCitiesToCsv(game: Game, outFile: File) {
                 cities(game).joinToString(separator = "\n", postfix = "\n") { "${it.internalId};${it.name};${it.countryOrState};${it.numOfCompanies};${it.dlc}" }).toByteArray())
 }
 
-fun main(args: Array<String>) {
-    val citiesList = cities(Game.ETS2)
-    citiesList.forEach(::println)
-    println("Number of Cities: ${citiesList.size}")
+fun exportCitiesToJson(game: Game, outFile: File) {
+    Files.write(outFile.toPath(), JacksonUtils.toString(cities(game)).toByteArray())
+}
 
-    exportCitiesToCsv(Game.ETS2, File("zdata/ets2_cities.csv"))
+fun main(args: Array<String>) {
+    /*val citiesList = cities(Game.ETS2)
+    citiesList.forEach(::println)
+    println("Number of Cities: ${citiesList.size}")*/
+
+    //exportCitiesToCsv(Game.ETS2, File("zdata/ets2_cities.csv"))
+    exportCitiesToJson(Game.ETS2, File("zdata/ets2_cities.json"))
 
 }

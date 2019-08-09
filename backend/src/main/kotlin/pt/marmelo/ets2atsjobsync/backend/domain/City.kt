@@ -9,8 +9,8 @@ data class City(
     @NaturalId
     val internalId: String,
     val name: String,
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "country_or_state_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "country_or_state_id", nullable = false)
     val countryOrState: CountryOrState,
     @Enumerated(EnumType.STRING)
     val dlc: Dlc,

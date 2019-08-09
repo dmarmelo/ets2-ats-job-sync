@@ -2,10 +2,12 @@ package pt.marmelo.ets2atsjobsync.client.tools
 
 import pt.marmelo.ets2atsjobsync.client.Save
 import pt.marmelo.ets2atsjobsync.client.SiiFile
-import pt.marmelo.ets2atsjobsync.common.payloads.CompanyPayload
+import pt.marmelo.ets2atsjobsync.common.payload.CompanyPayload
+import pt.marmelo.ets2atsjobsync.common.utils.JacksonUtils
 import pt.marmelo.ets2atsjobsync.parser.Context
 import pt.marmelo.ets2atsjobsync.parser.ParseCallback
 import java.io.File
+import java.nio.file.Files
 
 fun extractCompanies(save: File) : List<CompanyPayload> {
     val companies = mutableListOf<CompanyPayload>()
@@ -32,8 +34,17 @@ fun extractCompanies(save: File) : List<CompanyPayload> {
     return companies.sortedBy { it.internalId }
 }
 
+fun extractCompaniesToCsv(save: File, outFile: File) {
+    Files.write(outFile.toPath(),
+        ("InternalId;Name;CityInternalId;CargoSlots\n" +
+                extractCompanies(save).joinToString(separator = "\n", postfix = "\n") { "${it.internalId};${it.name};${it.cityInternalId};${it.cargoSlots}" }).toByteArray())
+}
 
-fun extractCities(save: File) : List<String> = extractCompanies(save).map { it.city }.distinct()
+fun extractCompaniesToJson(save: File, outFile: File) {
+    Files.write(outFile.toPath(), JacksonUtils.toString(extractCompanies(save)).toByteArray())
+}
+
+fun extractCities(save: File) : List<String> = extractCompanies(save).map { it.cityInternalId }.distinct()
 
 fun extractCompanyNames(save: File) : List<String> = extractCompanies(save).map { it.name }.distinct()
 
@@ -61,7 +72,7 @@ fun extractVisitedCities(save: File) : Set<String> {
 }
 
 fun main() {
-    val extractCompanies = extractCompanies(File("zdata/1.35/game.sii"))
+    /*val extractCompanies = extractCompanies(File("zdata/1.35/game.sii"))
     extractCompanies.forEach(::println)
     println("${extractCompanies.size} companies")
 
@@ -71,5 +82,8 @@ fun main() {
 
     val extractCompanyNames = extractCompanyNames(File("zdata/1.35/game.sii"))
     extractCompanyNames.forEach(::println)
-    println("${extractCompanyNames.size} companies")
+    println("${extractCompanyNames.size} companies")*/
+
+    //extractCompaniesToCsv(File("zdata/1.35/game.sii"), File("zdata/ets2_companies.csv"))
+    extractCompaniesToJson(File("zdata/1.35/game.sii"), File("zdata/ets2_companies.json"))
 }

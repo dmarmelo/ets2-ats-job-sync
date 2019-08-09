@@ -2,9 +2,9 @@ package pt.marmelo.ets2atsjobsync.backend.domain.converter
 
 import javax.persistence.AttributeConverter
 
-class CommaDelimitedStrings : AttributeConverter<List<String>, String> {
+class PipeDelimitedStrings : AttributeConverter<List<String>, String> {
     companion object {
-        const val DELIMITER = ","
+        const val DELIMITER = "|"
     }
     override fun convertToDatabaseColumn(list: List<String>?): String {
         list ?: return ""

@@ -1,8 +1,8 @@
 package pt.marmelo.ets2atsjobsync.backend.domain
 
 import org.hibernate.annotations.NaturalId
-import pt.marmelo.ets2atsjobsync.backend.domain.converter.CommaDelimitedStrings
-import pt.marmelo.ets2atsjobsync.common.payloads.JobPayload
+import pt.marmelo.ets2atsjobsync.backend.domain.converter.PipeDelimitedStrings
+import pt.marmelo.ets2atsjobsync.common.payload.JobPayload
 import javax.persistence.*
 
 @Entity
@@ -14,15 +14,15 @@ data class Job(
     val shortestDistanceKm: Int,
     val ferryTime: Int,
     val ferryPrice: Int,
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "cargo_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "cargo_id", nullable = false)
     val cargo: Cargo,
     val companyTruck: String,
     val trailerVariant: String,
     val trailerDefinition: String,
     val unitsCount: Int,
     val fillRatio: Int,
-    @Convert(converter = CommaDelimitedStrings::class)
+    @Convert(converter = PipeDelimitedStrings::class)
     val trailerPlace: MutableList<String>,
     @NaturalId
     val hash: String // calculate the hash of the json to compare if it already exists

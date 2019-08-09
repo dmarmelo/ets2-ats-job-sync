@@ -5,6 +5,6 @@ import pt.marmelo.ets2atsjobsync.backend.domain.City
 import java.util.*
 
 interface CityRepository : JpaRepository<City, Long> {
-    fun findByInternalId(name: String): Optional<City>
-    fun existsByInternalId(name: String): Boolean
+    fun findByInternalId(internalId: String): Optional<City>
+    fun existsByInternalId(internalId: String): Boolean
 }
