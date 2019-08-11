@@ -127,7 +127,11 @@ class Save(
                 if (name == COMPANY_UNIT) {
                     currentCompany = value.substring("company.volatile.".length)
                     if (jobsMap.containsKey(currentCompany)) {
-                        companyJobs = jobsMap.getValue(currentCompany)
+                        companyJobs =
+                            if (jobsMap.containsKey(currentCompany))
+                                jobsMap.getValue(currentCompany)
+                            else
+                                emptyList()
                     } else {
                         companyJobs = Collections.emptyList()
                     }
@@ -167,12 +171,10 @@ class Save(
                             newLineHasValue = true
                         }
                         else -> {
-                            for (property in JobPayload.Properties.values()) {
-                                if (name == property.propertyName) {
-                                    newSaveData.append(if (!useEmptyJob) property.formatValue(currentJob) else property.defaultValue())
-                                    newLineHasValue = true
-                                    break
-                                }
+                            val property = JobPayload.Properties.findByPropertyName(name)
+                            if (property != null) {
+                                newSaveData.append(if (!useEmptyJob) property.formatValue(currentJob) else property.defaultValue())
+                                newLineHasValue = true
                             }
                         }
                     }

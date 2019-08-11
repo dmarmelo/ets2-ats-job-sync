@@ -40,15 +40,10 @@ data class JobPayload(
         val jobPropertyName: String
             get() {
                 val split = propertyName.split("_")
-                return if (split.size == 1) {
+                return if (split.size == 1)
                     propertyName
-                } else {
-                    var camelCase = split[0]
-                    for (i in 1 until split.size) {
-                        camelCase += split[i][0].toUpperCase() + split[i].substring(1)
-                    }
-                    camelCase
-                }
+                else
+                    split[0] + split.drop(1).map { it[0].toUpperCase() + it.substring(1) }.toString()
             }
         private lateinit var blankValue: Any
         private var isQuoted: Boolean = false
@@ -76,7 +71,7 @@ data class JobPayload(
                 val value = job.readPropery<List<*>>(jobPropertyName)
                 val formattedList = StringBuilder()
                 formattedList.append(value.size)
-                for ((i, p) in value.withIndex()) {
+                value.forEachIndexed { i, p ->
                     formattedList.append("\r\n $propertyName[$i]: $p")
                 }
                 formattedList.toString()
@@ -112,14 +107,18 @@ data class JobPayload(
 
         companion object {
             fun isList(name: String): Boolean {
-                for (p in values()) {
-                    if (p.isList && name.startsWith(p.propertyName + "["))
+                values().forEach {
+                    if (it.isList && name.startsWith(it.propertyName + "["))
                         return true
                 }
                 return false
             }
 
             fun notList(name: String) = !isList(name)
+
+            fun findByPropertyName(propertyName: String): Properties? {
+                return values().filter { it.propertyName == propertyName }.firstOrNull()
+            }
         }
     }
 }
