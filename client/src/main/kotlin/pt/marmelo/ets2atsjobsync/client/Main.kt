@@ -1,7 +1,7 @@
 package pt.marmelo.ets2atsjobsync.client
 
 import pt.marmelo.ets2atsjobsync.common.Game
-import pt.marmelo.ets2atsjobsync.common.payloads.JobPayload
+import pt.marmelo.ets2atsjobsync.common.payload.JobPayload
 import pt.marmelo.ets2atsjobsync.common.utils.JacksonUtils
 import java.nio.file.Files
 import java.nio.file.Paths

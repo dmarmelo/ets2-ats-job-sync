@@ -8,6 +8,9 @@ import javax.persistence.*
 @Entity
 data class Job(
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "source_id", nullable = false)
+    val source: Company,
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "target_id", nullable = false)
     val target: Company,
     val urgency: Int,
@@ -25,7 +28,10 @@ data class Job(
     @Convert(converter = PipeDelimitedStrings::class)
     val trailerPlace: MutableList<String>,
     @NaturalId
-    val hash: String // calculate the hash of the json to compare if it already exists
+    val hash: String, // calculate the hash of the json to compare if it already exists
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "ingest_id", nullable = false)
+    val ingest: Ingest
 ) : DomainObject() {
 
     val isHighPowerCargo: Boolean
@@ -35,6 +41,7 @@ data class Job(
         get() = companyTruck.startsWith("heavy")
 
     fun toJobPayload(): JobPayload = JobPayload(
+        source.internalId,
         target.internalId,
         urgency,
         shortestDistanceKm,

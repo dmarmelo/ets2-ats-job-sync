@@ -52,8 +52,8 @@ class Save(
         }
     }
 
-    fun extractJobs(): Map<String, List<JobPayload>> {
-        val jobs: MutableMap<String, MutableList<JobPayload>> = HashMap()
+    fun extractJobs(): List<JobPayload> {
+        val jobs: MutableList<JobPayload> = mutableListOf()
         var inJob = false
         var skipJob = false
         var job = JobPayload()
@@ -64,15 +64,16 @@ class Save(
             if (context == Context.UNIT_START) {
                 if (name == COMPANY_UNIT) {
                     currentCompany = value.replace(COMPANY_NAME_PREFIX, "")
-                    jobs[currentCompany] = ArrayList()
+                    //jobs[currentCompany] = ArrayList()
                 } else if (name == JOB_UNIT) {
                     inJob = true
-                    job = JobPayload()
+                    job = JobPayload(currentCompany)
                 }
             } else if (context == Context.UNIT_END) {
                 if (inJob) {
                     if (!skipJob)
-                        jobs[currentCompany]!!.add(job)
+                        //jobs[currentCompany]!!.add(job)
+                        jobs.add(job)
                     inJob = false
                     skipJob = false
                 }
@@ -106,7 +107,8 @@ class Save(
         return jobs
     }
 
-    fun replaceJobs(jobs: Map<String, List<JobPayload>>): Boolean {
+    fun replaceJobs(jobs: List<JobPayload>): Boolean {
+        val jobsMap = jobs.groupBy { it.source }
         var currentCompany: String
         val newSaveData = StringBuilder("SiiNunit\r\n{")
         var inJob = false
@@ -124,8 +126,8 @@ class Save(
                 newSaveData.append("\r\n").append(name).append(" : ").append(value).append(" {\r\n")
                 if (name == COMPANY_UNIT) {
                     currentCompany = value.substring("company.volatile.".length)
-                    if (jobs.containsKey(currentCompany)) {
-                        companyJobs = jobs.getValue(currentCompany)
+                    if (jobsMap.containsKey(currentCompany)) {
+                        companyJobs = jobsMap.getValue(currentCompany)
                     } else {
                         companyJobs = Collections.emptyList()
                     }

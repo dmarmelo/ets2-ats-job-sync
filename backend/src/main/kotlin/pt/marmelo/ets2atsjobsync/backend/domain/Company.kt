@@ -13,11 +13,18 @@ data class Company(
     val city: City,
     val cargoSlots: Int,
     @OneToMany(
+        mappedBy = "source",
+        cascade = [CascadeType.ALL],
+        fetch = FetchType.LAZY,
+        orphanRemoval = true
+    )
+    val sourceJobs: MutableSet<Job> = HashSet(),
+    @OneToMany(
         mappedBy = "target",
         cascade = [CascadeType.ALL],
         fetch = FetchType.LAZY,
         orphanRemoval = true
     )
-    val jobs: MutableSet<Job> = HashSet()
+    val targetJobs: MutableSet<Job> = HashSet()
 ) : DomainObject() {
 }

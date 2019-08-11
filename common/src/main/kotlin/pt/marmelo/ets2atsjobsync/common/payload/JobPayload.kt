@@ -3,6 +3,7 @@ package pt.marmelo.ets2atsjobsync.common.payload
 import pt.marmelo.ets2atsjobsync.common.utils.readPropery
 
 data class JobPayload(
+    var source: String = "",
     var target: String = "",
     /*@JsonIgnore
     var expirationTime: Long = 0,*/

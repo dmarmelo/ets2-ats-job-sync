@@ -28,9 +28,10 @@ object JacksonUtils {
 
     }
 
-    fun <T> toString(value: T): String {
+    fun <T> toString(value: T, pretty: Boolean = false): String {
         try {
-            return OBJECT_MAPPER.writeValueAsString(value)
+            return if (pretty) OBJECT_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString(value)
+            else OBJECT_MAPPER.writeValueAsString(value)
         } catch (e: JsonProcessingException) {
             throw IllegalArgumentException("The given Json object value: $value cannot be transformed to a String")
         }
