@@ -43,7 +43,7 @@ data class JobPayload(
                 return if (split.size == 1)
                     propertyName
                 else
-                    split[0] + split.drop(1).map { it[0].toUpperCase() + it.substring(1) }.toString()
+                    split[0] + split.drop(1).map { it[0].toUpperCase() + it.substring(1) }.joinToString(separator = "")
             }
         private lateinit var blankValue: Any
         private var isQuoted: Boolean = false
