@@ -19,9 +19,9 @@ import javax.transaction.Transactional
 
 @Component
 class DbUpdater(
-    val countryOrStateRepository: CountryOrStateRepository,
-    val cityRepository: CityRepository,
-    val companyRepository: CompanyRepository
+    private val countryOrStateRepository: CountryOrStateRepository,
+    private val cityRepository: CityRepository,
+    private val companyRepository: CompanyRepository
 ) : CommandLineRunner {
     private val logger = LoggerFactory.getLogger(DbUpdater::class.java)
 
