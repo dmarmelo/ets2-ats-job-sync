@@ -1,6 +1,7 @@
 package pt.marmelo.ets2atsjobsync.common.utils
 
 import java.text.Normalizer
+import kotlin.math.min
 import kotlin.reflect.KClass
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.declaredMemberFunctions
@@ -45,4 +46,13 @@ fun <T: Any?>String.callSelfParser(destClazz: KClass<*>): Any? {
 fun CharSequence.removeAccents(): String {
     return Normalizer.normalize(this, Normalizer.Form.NFD)
         .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
+}
+
+fun <T> List<T>.partition(groupSize: Int): List<List<T>> {
+    val numberOfGroups = (this.size + groupSize - 1) / groupSize
+    val result = mutableListOf<List<T>>()
+    for (i in 0 until numberOfGroups) {
+        result.add(this.subList(groupSize * i, min(groupSize * i + groupSize, this.size)))
+    }
+    return result
 }

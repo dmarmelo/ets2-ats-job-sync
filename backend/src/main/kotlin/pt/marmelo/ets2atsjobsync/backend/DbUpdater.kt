@@ -23,7 +23,7 @@ class DbUpdater(
     private val cityRepository: CityRepository,
     private val companyRepository: CompanyRepository
 ) : CommandLineRunner {
-    private val logger = LoggerFactory.getLogger(DbUpdater::class.java)
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     @Value("classpath:ets2_cities.json")
     lateinit var ets2Cities: Resource
