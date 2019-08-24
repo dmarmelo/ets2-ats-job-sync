@@ -91,7 +91,13 @@ class Save(
                         JobPayload.Properties.DISTANCE.propertyName -> job.shortestDistanceKm = value.toInt()
                         JobPayload.Properties.FERRY_TIME.propertyName -> job.ferryTime = value.toInt()
                         JobPayload.Properties.FERRY_PRICE.propertyName -> job.ferryPrice = value.toInt()
-                        JobPayload.Properties.CARGO.propertyName -> job.cargo = value
+                        JobPayload.Properties.CARGO.propertyName -> {
+                            // To allow job replacing on offline game
+                            if (value.contains("caravan"))
+                                skipJob = true
+                            else
+                                job.cargo = value
+                        }
                         JobPayload.Properties.COMPANY_TRUCK.propertyName -> job.companyTruck = value
                         JobPayload.Properties.TRAILER_VARIANT.propertyName -> job.trailerVariant = value
                         JobPayload.Properties.TRAILER_DEFINITION.propertyName -> job.trailerDefinition = value
@@ -108,7 +114,10 @@ class Save(
     }
 
     fun replaceJobs(jobs: List<JobPayload>): Boolean {
-        val jobsMap = jobs.groupBy { it.source }
+        return replaceJobs(jobs.groupBy { it.source })
+    }
+
+    fun replaceJobs(jobs: Map<String, List<JobPayload>>): Boolean {
         var currentCompany: String
         val newSaveData = StringBuilder("SiiNunit\r\n{")
         var inJob = false
@@ -126,15 +135,7 @@ class Save(
                 newSaveData.append("\r\n").append(name).append(" : ").append(value).append(" {\r\n")
                 if (name == COMPANY_UNIT) {
                     currentCompany = value.substring("company.volatile.".length)
-                    if (jobsMap.containsKey(currentCompany)) {
-                        companyJobs =
-                            if (jobsMap.containsKey(currentCompany))
-                                jobsMap.getValue(currentCompany)
-                            else
-                                emptyList()
-                    } else {
-                        companyJobs = Collections.emptyList()
-                    }
+                    companyJobs = jobs.getOrDefault(currentCompany, emptyList())
                     companyJobIndex = 0
                 } else if (name == JOB_UNIT) {
                     inJob = true
