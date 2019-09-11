@@ -14,7 +14,7 @@ class IngestController(
 ) {
     @PostMapping("/ingest")
     fun ingest(@RequestBody jobs: List<JobPayload>): ResponseEntity<Unit> {
-        ingestService.ingest(jobs)
+        ingestService.ingestMultiThread(jobs)
         return ResponseEntity(HttpStatus.OK)
     }
 }
