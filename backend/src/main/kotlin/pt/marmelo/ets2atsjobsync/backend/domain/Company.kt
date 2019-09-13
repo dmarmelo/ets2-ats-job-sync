@@ -1,5 +1,7 @@
 package pt.marmelo.ets2atsjobsync.backend.domain
 
+import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import org.hibernate.annotations.NaturalId
 import javax.persistence.*
 
@@ -10,6 +12,7 @@ data class Company(
     val name: String,
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "city_id", nullable = false)
+    @JsonManagedReference
     val city: City,
     val cargoSlots: Int,
     @OneToMany(
@@ -18,6 +21,7 @@ data class Company(
         fetch = FetchType.LAZY,
         orphanRemoval = true
     )
+    @JsonBackReference
     val sourceJobs: MutableSet<Job> = HashSet(),
     @OneToMany(
         mappedBy = "target",
@@ -25,6 +29,7 @@ data class Company(
         fetch = FetchType.LAZY,
         orphanRemoval = true
     )
+    @JsonBackReference
     val targetJobs: MutableSet<Job> = HashSet()
 ) : DomainObject() {
 }

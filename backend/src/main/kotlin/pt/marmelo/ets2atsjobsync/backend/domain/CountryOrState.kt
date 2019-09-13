@@ -1,5 +1,6 @@
 package pt.marmelo.ets2atsjobsync.backend.domain
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import org.hibernate.annotations.NaturalId
 import pt.marmelo.ets2atsjobsync.common.Game
 import javax.persistence.*
@@ -16,6 +17,7 @@ data class CountryOrState(
         fetch = FetchType.LAZY,
         orphanRemoval = true
     )
+    @JsonBackReference
     val cities: MutableSet<City> = HashSet()
 ) : DomainObject() {
 }

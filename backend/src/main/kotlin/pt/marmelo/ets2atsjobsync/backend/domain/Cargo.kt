@@ -1,5 +1,6 @@
 package pt.marmelo.ets2atsjobsync.backend.domain
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import org.hibernate.annotations.NaturalId
 import javax.persistence.CascadeType
 import javax.persistence.Entity
@@ -17,6 +18,7 @@ data class Cargo(
         fetch = FetchType.LAZY,
         orphanRemoval = true
     )
+    @JsonBackReference
     val jobs: MutableSet<Job> = HashSet()
 ) : DomainObject() {
 }
