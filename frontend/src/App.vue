@@ -16,21 +16,24 @@
     </v-app-bar>
 
     <v-content>
-      <HelloWorld/>
+<!--      <HelloWorld/>-->
+      <JobsTable/>
     </v-content>
   </v-app>
 </template>
 
 <script>
-    import HelloWorld from './components/HelloWorld';
+  //import HelloWorld from './components/HelloWorld';
+  import JobsTable from "./components/JobsTable";
 
-    export default {
-  name: 'App',
-  components: {
-    HelloWorld,
-  },
-  data: () => ({
-    //
-  }),
+  export default {
+    name: 'App',
+    components: {
+      //HelloWorld,
+      JobsTable
+    },
+    data: () => ({
+      //
+    }),
 };
 </script>

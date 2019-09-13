@@ -24,5 +24,9 @@ enum class Dlc(
 
     // CARGO
     HIGH_POWER_CARGO(Game.ETS2, "rdlc|eut2_trailers", "High Power Cargo Pack"), // overweight in trailer
-    HEAVY_CARGO(Game.ETS2, "rdlc|eut2_heavy_cargo", "Heavy Cargo Pack") // heavy in company_truck
+    HEAVY_CARGO(Game.ETS2, "rdlc|eut2_heavy_cargo", "Heavy Cargo Pack"); // heavy in company_truck
+
+    companion object {
+        fun from(game: Game) = values().filter { it.game == game }
+    }
 }
