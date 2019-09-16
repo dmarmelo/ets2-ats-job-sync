@@ -13,6 +13,7 @@
               prevIcon: 'mdi-minus',
               nextIcon: 'mdi-plus'
             }"
+            multi-sort
             class="elevation-1"
         ></v-data-table>
     </div>
@@ -75,11 +76,11 @@
 
                 let url = `jobs?page=${page - 1}&size=${itemsPerPage}`;
                 if (sortBy.length > 0) {
-                    let dir = 'ASC';
-                    if (sortDesc[0])
-                        dir = 'DESC';
-                    url += `&sortDirection=${dir}&sortBy=${sortBy[0]}`
+                    let dirJoin = sortDesc.map(dir => dir ? 'DESC' : 'ASC').join(',');
+                    let sortJoin = sortBy.join(',');
+                    url += `&sortDirection=${dirJoin}&sortBy=${sortJoin}`
                 }
+                //console.log(url);
                 return fetch(url)
                     .then((resp) => resp.json());
             }
