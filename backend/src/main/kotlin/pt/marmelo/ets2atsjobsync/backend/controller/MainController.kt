@@ -35,6 +35,6 @@ class MainController(
         return jobRepository.findAll(PageRequest.of(page, size, Sort.by(sortOrders)))
     }
 
-    @GetMapping("jobs/{id}")
-    fun jobs(@PathVariable id: Long) = jobRepository.findById(id)
+    @GetMapping("jobs/{ids}")
+    fun jobs(@PathVariable ids: List<Long>) = jobRepository.findAllById(ids).map { it.toJobPayload() }
 }

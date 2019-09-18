@@ -36,7 +36,7 @@
                     { text: 'Target Country', value: 'target.city.countryOrState.name' },
                     { text: 'Target City', value: 'target.city.name' },
                     { text: 'Cargo', value: 'cargo.internalId' },
-                    { text: 'Distance', value: 'shortestDistanceKm' },
+                    { text: 'Distance (km)', value: 'shortestDistanceKm' },
                     { text: 'Source DLC', value: 'source.city.dlc' },
                     { text: 'Target DLC', value: 'target.city.dlc' },
                     { text: 'Heavy Power Cargo', value: 'highPowerCargo', sortable: false },
