@@ -32,7 +32,7 @@ class Info(
                     _profiles.add(profile)
                 }
             }
-        Collections.sort(_profiles, Collections.reverseOrder())
+        _profiles.sortDescending()
     }
 
     // Returns the default ETS2 Settings directory for the current user

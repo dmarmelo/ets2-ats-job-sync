@@ -8,7 +8,6 @@ import java.nio.ByteOrder
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
 import java.nio.file.Path
-import java.util.*
 import java.util.zip.Inflater
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
@@ -55,15 +54,15 @@ class SiiFile(
         }
         else if (magic == SII_MAGIC_ENCRYPTED) { // Encrypted
             // Useful data for unpacking, from byte 36 to end
-            val subData = Arrays.copyOfRange(data, 36, data.size)
+            val subData = data.copyOfRange(36, data.size)
             // Initialization Vector, first 16 bytes
-            val iv = Arrays.copyOfRange(subData, 0, 16)
+            val iv = subData.copyOfRange(0, 16)
             // Size of the inflated data, form byte 16 to 20, sizeof(int)
-            val dataSizeByte = Arrays.copyOfRange(subData, 16, 16 + 4)
+            val dataSizeByte = subData.copyOfRange(16, 16 + 4)
             // Obtain the integer value, it is in Little Endian byte order from C/C++
             val dataSize = ByteBuffer.wrap(dataSizeByte).order(ByteOrder.LITTLE_ENDIAN).int
             // Actually encrypted data, from byte 20 to end
-            val cipherText = Arrays.copyOfRange(subData, 20, subData.size)
+            val cipherText = subData.copyOfRange(20, subData.size)
             // Decrypts the data
             val compressed = decrypt(AES_KEY, iv, cipherText)
             // Inflate the decrypted data
@@ -74,7 +73,7 @@ class SiiFile(
 
     // Obtains the file discriminator String aka "magic"
     private fun getMagic(data: ByteArray): String {
-        return String(Arrays.copyOfRange(data, 0, 4), StandardCharsets.UTF_8)
+        return String(data.copyOfRange(0, 4), StandardCharsets.UTF_8)
     }
 
     // Decrypts the data

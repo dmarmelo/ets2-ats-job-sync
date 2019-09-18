@@ -33,8 +33,7 @@ class Profile(
                     _saves.add(save)
                 }
             }
-        Collections.sort(_saves, Collections.reverseOrder())
-        //_saves.sort()
+        _saves.sortDescending()
     }
 
     override fun processAtribute(context: Context, name: String, value: String) {
