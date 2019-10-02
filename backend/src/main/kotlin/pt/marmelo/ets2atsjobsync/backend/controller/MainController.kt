@@ -37,4 +37,7 @@ class MainController(
 
     @GetMapping("jobs/{ids}")
     fun jobs(@PathVariable ids: List<Long>) = jobRepository.findAllById(ids).map { it.toJobPayload() }
+
+    @GetMapping("jobs/test/{game}")
+    fun jobs(@PathVariable game: Game) = jobRepository.findByGame(game, PageRequest.of(0, 2, Sort.by("id").ascending()))
 }

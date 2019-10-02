@@ -89,6 +89,7 @@ class IngestService(
                 jobsP.forEach { job ->
                     val jobHash = DigestUtils.md5Hex(JacksonUtils.toString(job))
                     // Check if the job already exists
+                    // TODO add existing job to ingest?
                     if (!jobRepository.existsByHash(jobHash)) {
                         val source = companiesMap.getValue(job.source)
                         val target = companiesMap.getValue(job.target)
