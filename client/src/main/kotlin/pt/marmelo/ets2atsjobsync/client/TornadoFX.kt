@@ -7,6 +7,8 @@ import javafx.scene.image.Image
 import javafx.scene.layout.Priority
 import javafx.stage.Stage
 import pt.marmelo.ets2atsjobsync.common.Game
+import pt.marmelo.ets2atsjobsync.common.payload.JobPayload
+import pt.marmelo.ets2atsjobsync.common.utils.JacksonUtils
 import tornadofx.*
 import java.io.File
 import java.nio.file.Files
@@ -27,6 +29,12 @@ class MyView : View("ETS2 ATS Job Sync") {
                         togglebutton(Game.ETS2.name).apply { isSelected = true }
                         togglebutton(Game.ATS.name)
                         togglebutton("ProMods")
+                    }
+                    pane { hgrow = Priority.ALWAYS }
+                    button("Refresh") {
+                        alignment = Pos.CENTER_RIGHT
+                    }.action {
+                        controller.refresh()
                     }
                 }
                 hbox {
@@ -80,7 +88,7 @@ class MyView : View("ETS2 ATS Job Sync") {
         titledpane("Job List") {
             isCollapsible = false
             vbox {
-                combobox<String> {
+                combobox<String>(controller.selectedJobList) {
                     items = controller.availableJobLists
                 }
             }
@@ -88,11 +96,14 @@ class MyView : View("ETS2 ATS Job Sync") {
         hbox {
             button("Sync Jobs") {
                 alignment = Pos.CENTER_RIGHT
+            }.action {
+                controller.sync()
             }
-            pane { hgrow = Priority.ALWAYS }
+            label(controller.syncStatus)
+            /*pane { hgrow = Priority.ALWAYS }
             button("Close") {
                 alignment = Pos.CENTER_LEFT
-            }
+            }*/
         }
     }
 }
@@ -108,6 +119,9 @@ class MyController : Controller() {
     val selectedSave = SimpleObjectProperty<Save>()
 
     val availableJobLists = mutableListOf<String>().observable()
+    val selectedJobList = SimpleStringProperty()
+
+    val syncStatus = SimpleStringProperty("Stopped")
 
     init {
         createJobDirs()
@@ -126,7 +140,6 @@ class MyController : Controller() {
             saveList.addAll(it!!.saves)
             selectedSave.value = saveList[0]
         }
-
     }
 
     private fun updateData(game: Game) {
@@ -156,6 +169,17 @@ class MyController : Controller() {
             .filter { f -> f != currentDirectory } // skip root
             .filter { f -> Files.isRegularFile(f) }
             .forEach{ f -> availableJobLists.add(f.toFile().name) }
+        availableJobLists.sort()
+        if (!availableJobLists.isEmpty())
+            selectedJobList.value = availableJobLists[0]
+    }
+
+    fun sync() {
+        syncStatus.value = "Syncing"
+        val jobListPath = Paths.get(selectedGame.value).resolve(selectedJobList.value)
+        val jobsList: List<JobPayload> = JacksonUtils.fromString(String(Files.readAllBytes(jobListPath)))
+        selectedSave.value.replaceJobs(jobsList)
+        syncStatus.value = "Synced"
     }
 
     private fun gameFromString(game: String): Game =
@@ -164,6 +188,11 @@ class MyController : Controller() {
             Game.ATS.name -> Game.ATS
             else -> Game.INVALID
         }
+
+    fun refresh() {
+        updateData(gameFromString(selectedGame.value))
+        updateJobLists(selectedGame.value)
+    }
 }
 
 class MyApp : App(MyView::class, Styles::class) {
@@ -186,6 +215,9 @@ class Styles : Stylesheet() {
     }
 }
 
-fun main() {
-    launch<MyApp>()
+object Main {
+    @JvmStatic
+    fun main(args: Array<String>) {
+        launch<MyApp>()
+    }
 }

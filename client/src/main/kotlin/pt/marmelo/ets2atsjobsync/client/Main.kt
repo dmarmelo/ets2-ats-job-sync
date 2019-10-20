@@ -8,7 +8,7 @@ import java.nio.file.Paths
 
 fun main(args: Array<String>) {
 
-    val jobsList: List<JobPayload> = JacksonUtils.fromString(String(Files.readAllBytes(Paths.get("zdata/petersburg-palermo.json"))))
+    val jobsList: List<JobPayload> = JacksonUtils.fromString(String(Files.readAllBytes(Paths.get("zdata/jobs.json"))))
     val save = Info(Game.ETS2).profiles[0].saves[0]
     //val save = Save(Game.ETS2, Paths.get("zdata"))
     val jobs = save.extractJobs()
