@@ -52,5 +52,9 @@ class Profile(
         return game != Game.INVALID
     }
 
+    override fun toString(): String {
+        return "$name - $saveTime"
+    }
+
 
 }

@@ -43,7 +43,7 @@ fun <T: Any?>String.callSelfParser(destClazz: KClass<*>): Any? {
     return parsingMethod.call(this)
 }
 
-fun CharSequence.removeAccents(): String {
+fun CharSequence.removeDiacriticals(): String {
     return Normalizer.normalize(this, Normalizer.Form.NFD)
         .replace(Regex("\\p{InCombiningDiacriticalMarks}+"), "")
 }

@@ -2,7 +2,7 @@ package pt.marmelo.ets2atsjobsync.common.payload
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import pt.marmelo.ets2atsjobsync.common.Dlc
-import pt.marmelo.ets2atsjobsync.common.utils.removeAccents
+import pt.marmelo.ets2atsjobsync.common.utils.removeDiacriticals
 
 data class CityPayload(
     val name: String,
@@ -13,7 +13,7 @@ data class CityPayload(
     @get:JsonIgnore
     val internalId: String
         get() {
-            return when(val internalId = convertSpecialCharacters(name.toLowerCase().removeAccents().replace(" ", ""))) {
+            return when(val internalId = convertSpecialCharacters(name.toLowerCase().removeDiacriticals().replace(" ", ""))) {
                 "banskabystrica" -> "bystrica"
                 "clermont-ferrand" -> "clermont"
                 "frankfurtammain" -> "frankfurt"
@@ -33,7 +33,7 @@ data class CityPayload(
 
     private fun convertSpecialCharacters(input: String) : String {
         val sb = StringBuilder(input)
-        for (i in 0 until sb.length) {
+        for (i in sb.indices) {
             when {
                 sb[i] == '\u0141' -> { // Ł
                     sb.deleteCharAt(i)

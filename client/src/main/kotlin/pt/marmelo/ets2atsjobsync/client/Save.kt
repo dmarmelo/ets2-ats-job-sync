@@ -202,4 +202,8 @@ class Save(
     override fun validate(): Boolean {
         return true
     }
+
+    override fun toString(): String {
+        return "$name - $saveTime"
+    }
 }
