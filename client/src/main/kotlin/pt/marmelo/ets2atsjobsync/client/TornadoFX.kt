@@ -2,14 +2,15 @@ package pt.marmelo.ets2atsjobsync.client
 
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
-import javafx.collections.FXCollections
 import javafx.geometry.Pos
 import javafx.scene.image.Image
 import javafx.scene.layout.Priority
-import javafx.scene.paint.Color
 import javafx.stage.Stage
 import pt.marmelo.ets2atsjobsync.common.Game
 import tornadofx.*
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class MyView : View("ETS2 ATS Job Sync") {
     private val controller: MyController by inject()
@@ -32,7 +33,7 @@ class MyView : View("ETS2 ATS Job Sync") {
                     label("Settings Folder: ")
                     label(controller.gameDir)
                 }
-                hbox {
+                /*hbox {
                     label("Save Format: ")
                     label("Text")
                 }
@@ -41,14 +42,13 @@ class MyView : View("ETS2 ATS Job Sync") {
                         textFill = Color.GREEN
                         style = "-fx-font-weight: bold"
                     }
-                }
+                }*/
             }
         }
         titledpane("Select {GAME} Profile") {
             isCollapsible = false
             label("X {GAME} profile.")
             combobox<Profile>(controller.selectedProfile) {
-                //selectionModel.selectFirst()
                 items = controller.profileList
             }
         }
@@ -56,26 +56,33 @@ class MyView : View("ETS2 ATS Job Sync") {
             isCollapsible = false
             label("X {GAME} save.")
             combobox<Save>(controller.selectedSave) {
-                //selectionModel.selectFirst()
                 items = controller.saveList
             }
         }
         titledpane("DLCs") {
             isCollapsible = false
-            hbox {
-                label("Also include jobs that require:")
-                pane { hgrow = Priority.ALWAYS }
-                hyperlink("Select all"){
-                    alignment = Pos.CENTER_LEFT
-                }.action {
+            vbox {
+                hbox {
+                    hgrow = Priority.ALWAYS
+                    label("Also include jobs that require:")
+                    pane { hgrow = Priority.ALWAYS }
+                    hyperlink("Select all"){
+                        alignment = Pos.CENTER_LEFT
+                    }.action {
 
+                    }
+                }
+                hbox {
+                    label("WIP")
                 }
             }
         }
         titledpane("Job List") {
             isCollapsible = false
-            combobox<String> {
-                items = FXCollections.observableArrayList("1", "2")
+            vbox {
+                combobox<String> {
+                    items = controller.availableJobLists
+                }
             }
         }
         hbox {
@@ -100,11 +107,17 @@ class MyController : Controller() {
     var saveList = mutableListOf<Save>().observable()
     val selectedSave = SimpleObjectProperty<Save>()
 
+    val availableJobLists = mutableListOf<String>().observable()
+
     init {
+        createJobDirs()
         updateData(Game.ETS2)
+        updateJobLists(Game.ETS2.name)
 
         selectedGame.onChange {
-            updateData(gameFromString(it!!))
+            it ?: return@onChange
+            updateData(gameFromString(it))
+            updateJobLists(it)
         }
 
         selectedProfile.onChange {
@@ -127,6 +140,22 @@ class MyController : Controller() {
         saveList.addAll(gameInfo.profiles[0].saves)
         selectedSave.value = saveList[0]
         gameUpdating = false
+    }
+
+    private fun createJobDirs() {
+        listOf(Game.ETS2.name,
+            Game.ATS.name,
+            "ProMods")
+            .forEach { File(it).mkdir() }
+    }
+
+    private fun updateJobLists(game: String) {
+        availableJobLists.clear()
+        val currentDirectory = Paths.get(game)
+        Files.walk(currentDirectory, 1)
+            .filter { f -> f != currentDirectory } // skip root
+            .filter { f -> Files.isRegularFile(f) }
+            .forEach{ f -> availableJobLists.add(f.toFile().name) }
     }
 
     private fun gameFromString(game: String): Game =
