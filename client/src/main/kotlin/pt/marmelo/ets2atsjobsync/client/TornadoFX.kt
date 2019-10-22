@@ -201,7 +201,7 @@ class MyController : Controller() {
 
 class MyApp : App(MyView::class, Styles::class) {
     override fun start(stage: Stage) {
-        stage.icons += Image("iconw_256.png")
+        stage.icons += Image("iconr_256.png")
         super.start(stage)
         stage.width = 500.0
         //stage.height = 650.0
