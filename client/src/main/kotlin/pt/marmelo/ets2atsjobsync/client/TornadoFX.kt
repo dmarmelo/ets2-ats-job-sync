@@ -26,6 +26,7 @@ class MyView : View("ETS2 ATS Job Sync") {
                     spacing = 10.0
                     togglegroup {
                         bind(controller.selectedGame)
+                        selectedToggleProperty().addListener { _, oldValue, newValue -> if (newValue == null) oldValue.isSelected = true }
                         togglebutton(Game.ETS2.name).apply { isSelected = true }
                         togglebutton(Game.ATS.name)
                         togglebutton("ProMods")
@@ -97,7 +98,12 @@ class MyView : View("ETS2 ATS Job Sync") {
             button("Sync Jobs") {
                 alignment = Pos.CENTER_RIGHT
             }.action {
-                controller.sync()
+                controller.syncStatus.value = "Syncing"
+                runAsyncWithOverlay {
+                    controller.sync()
+                } ui {
+                    controller.syncStatus.value = "Synced"
+                }
             }
             label(controller.syncStatus)
             /*pane { hgrow = Priority.ALWAYS }
@@ -175,11 +181,9 @@ class MyController : Controller() {
     }
 
     fun sync() {
-        syncStatus.value = "Syncing"
         val jobListPath = Paths.get(selectedGame.value).resolve(selectedJobList.value)
         val jobsList: List<JobPayload> = JacksonUtils.fromString(String(Files.readAllBytes(jobListPath)))
         selectedSave.value.replaceJobs(jobsList)
-        syncStatus.value = "Synced"
     }
 
     private fun gameFromString(game: String): Game =
