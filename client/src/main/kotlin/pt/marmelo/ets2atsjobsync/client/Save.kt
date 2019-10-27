@@ -30,6 +30,7 @@ class Save(
     var gameTime: Long = 0
         private set
 
+    // TODO Change String to enum Dlc
     private var _dlcs: MutableList<String> = ArrayList()
     val dlcs: List<String>
         get() = _dlcs.toList()
@@ -49,6 +50,7 @@ class Save(
                     "mod" -> split[1]
                     else -> ""
                 }
+                // TODO parse dlc name to enum Dlc
                 //val dlcName = split[1].split("_")[1]
                 _dlcs.add(dlcName)
             }

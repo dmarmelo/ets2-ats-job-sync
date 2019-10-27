@@ -19,7 +19,7 @@
     <description>ETS2 ATS Job Sync Client</description>
 
     <properties>
-        <main.class>pt.marmelo.ets2atsjobsync.client.Main</main.class>
+        <main.class>pt.marmelo.ets2atsjobsync.client.TornadoFXKt</main.class>
     </properties>
 
     <dependencies>

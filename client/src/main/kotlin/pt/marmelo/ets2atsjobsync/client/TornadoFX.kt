@@ -3,9 +3,11 @@ package pt.marmelo.ets2atsjobsync.client
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
 import javafx.geometry.Pos
+import javafx.scene.control.CheckBox
 import javafx.scene.image.Image
 import javafx.scene.layout.Priority
 import javafx.stage.Stage
+import pt.marmelo.ets2atsjobsync.common.Dlc
 import pt.marmelo.ets2atsjobsync.common.Game
 import pt.marmelo.ets2atsjobsync.common.payload.JobPayload
 import pt.marmelo.ets2atsjobsync.common.utils.JacksonUtils
@@ -75,14 +77,20 @@ class MyView : View("ETS2 ATS Job Sync") {
                     hgrow = Priority.ALWAYS
                     label("Also include jobs that require:")
                     pane { hgrow = Priority.ALWAYS }
-                    hyperlink("Select all"){
+                    hyperlink("Select all") {
                         alignment = Pos.CENTER_LEFT
                     }.action {
-
+                        controller.selectAllDlcs()
                     }
                 }
                 hbox {
-                    label("WIP")
+                    checkbox(Dlc.HIGH_POWER_CARGO.title) {
+                        spacing = 20.0
+                        userData = Dlc.HIGH_POWER_CARGO
+                    }.apply { controller.dlcCheckBoxes.add(this) }
+                    checkbox(Dlc.HEAVY_CARGO.title){
+                        userData = Dlc.HEAVY_CARGO
+                    }.apply { controller.dlcCheckBoxes.add(this) }
                 }
             }
         }
@@ -124,6 +132,8 @@ class MyController : Controller() {
     var saveList = mutableListOf<Save>().observable()
     val selectedSave = SimpleObjectProperty<Save>()
 
+    val dlcCheckBoxes = mutableListOf<CheckBox>()
+
     val availableJobLists = mutableListOf<String>().observable()
     val selectedJobList = SimpleStringProperty()
 
@@ -158,7 +168,23 @@ class MyController : Controller() {
         saveList.clear()
         saveList.addAll(gameInfo.profiles[0].saves)
         selectedSave.value = saveList[0]
+
+        // TODO disable checkbox for the dlc's not in the save
+        /*checkBoxesList.forEach { cb ->
+            if (saveList[0].dlcs.any { cb.userData as Dlc }) {
+
+            }
+
+        }*/
+
         gameUpdating = false
+    }
+
+    fun selectAllDlcs() {
+        val toClear = dlcCheckBoxes.any { it.isSelected }
+        dlcCheckBoxes.forEach {
+            it.isSelected = !toClear
+        }
     }
 
     private fun createJobDirs() {
@@ -182,7 +208,11 @@ class MyController : Controller() {
 
     fun sync() {
         val jobListPath = Paths.get(selectedGame.value).resolve(selectedJobList.value)
-        val jobsList: List<JobPayload> = JacksonUtils.fromString(String(Files.readAllBytes(jobListPath)))
+        var jobsList: List<JobPayload> = JacksonUtils.fromString(String(Files.readAllBytes(jobListPath)))
+        dlcCheckBoxes.forEach {
+            if (!it.isDisabled && !it.isSelected)
+                jobsList = Dlc.removeCargoDlc(it.userData as Dlc, jobsList)
+        }
         selectedSave.value.replaceJobs(jobsList)
     }
 
@@ -219,9 +249,6 @@ class Styles : Stylesheet() {
     }
 }
 
-object Main {
-    @JvmStatic
-    fun main(args: Array<String>) {
-        launch<MyApp>()
-    }
+fun main() {
+    launch<MyApp>()
 }

@@ -21,6 +21,12 @@ data class JobPayload(
 ) {
     fun addTrailerPlace(trailerPlace: String) = this.trailerPlace.add(trailerPlace)
 
+    val isHighPowerCargo: Boolean
+        get() = trailerVariant.contains("overweight") || trailerDefinition.contains("overweight")
+
+    val isHeavyCargo: Boolean
+        get() = companyTruck.startsWith("heavy")
+
     enum class Properties {
         TARGET("target", "", true, true),
         EXPIRATION_TIME("expiration_time", "nil"),

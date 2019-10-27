@@ -1,5 +1,7 @@
 package pt.marmelo.ets2atsjobsync.common
 
+import pt.marmelo.ets2atsjobsync.common.payload.JobPayload
+
 enum class Dlc(
     val game: Game?,
     val id: String,
@@ -28,5 +30,14 @@ enum class Dlc(
 
     companion object {
         fun from(game: Game) = values().filter { it.game == game }
+
+        // Only works for cargo dlc's
+        fun removeCargoDlc(dlc: Dlc, jobs: List<JobPayload>): List<JobPayload> {
+            return when (dlc) {
+                HIGH_POWER_CARGO -> jobs.filter { !it.isHighPowerCargo }
+                HEAVY_CARGO -> jobs.filter { !it.isHeavyCargo}
+                else -> jobs
+            }
+        }
     }
 }

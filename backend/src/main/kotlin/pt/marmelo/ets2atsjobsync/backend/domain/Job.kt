@@ -40,10 +40,10 @@ data class Job(
 ) : DomainObject() {
 
     val isHighPowerCargo: Boolean
-        get() = trailerVariant.contains("overweight") || trailerDefinition.contains("overweight")
+        get() = toJobPayload().isHighPowerCargo
 
     val isHeavyCargo: Boolean
-        get() = companyTruck.startsWith("heavy")
+        get() = toJobPayload().isHeavyCargo
 
     fun toJobPayload(): JobPayload = JobPayload(
         source.internalId,
