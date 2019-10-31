@@ -14,7 +14,7 @@ fun ByteArray.toHexString() : String {
     return this.joinToString("") { String.format("%02x", it) }
 }
 
-fun <R: Any?> Any.readPropery(propertyName: String): R {
+fun <R: Any?> Any.readProperty(propertyName: String): R {
     @Suppress("UNCHECKED_CAST")
     return this.javaClass.kotlin.declaredMemberProperties.first { it.name == propertyName }.get(this) as R
 }

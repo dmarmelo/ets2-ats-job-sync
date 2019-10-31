@@ -1,6 +1,6 @@
 package pt.marmelo.ets2atsjobsync.common.payload
 
-import pt.marmelo.ets2atsjobsync.common.utils.readPropery
+import pt.marmelo.ets2atsjobsync.common.utils.readProperty
 
 data class JobPayload(
     var source: String = "",
@@ -74,7 +74,7 @@ data class JobPayload(
 
         fun formatValue(job: JobPayload): String {
             return if (isList) {
-                val value = job.readPropery<List<*>>(jobPropertyName)
+                val value = job.readProperty<List<*>>(jobPropertyName)
                 val formattedList = StringBuilder()
                 formattedList.append(value.size)
                 value.forEachIndexed { i, p ->
@@ -82,7 +82,7 @@ data class JobPayload(
                 }
                 formattedList.toString()
             } else {
-                val value = job.readPropery<Any>(jobPropertyName)
+                val value = job.readProperty<Any>(jobPropertyName)
                 formatValue(value)!!
             }
         }
