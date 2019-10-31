@@ -19,7 +19,7 @@
     <description>ETS2 ATS Job Sync Client</description>
 
     <properties>
-        <main.class>pt.marmelo.ets2atsjobsync.client.TornadoFXKt</main.class>
+        <main.class>pt.marmelo.ets2atsjobsync.client.ui.TornadoFXKt</main.class>
     </properties>
 
     <dependencies>
@@ -72,6 +72,12 @@
                     <artifactId>kotlin-reflect</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>no.tornado</groupId>
+            <artifactId>tornadofx-controlsfx</artifactId>
+            <version>0.1.1</version>
         </dependency>
 
         <dependency>
