@@ -124,14 +124,14 @@ class MyView : View("ETS2 ATS Job Sync") {
                         }
                     }
                 }
-                /*button("Clear Jobs").action {
+                button("Clear Jobs").action {
                     controller.status.value = "Clearing..."
                     runAsyncWithOverlay {
                         controller.clearJobs()
                     } ui {
                         controller.status.value = "Cleared!"
                     }
-                }*/
+                }
                 /*pane { hgrow = Priority.ALWAYS }
                 button("Close") {
                     alignment = Pos.CENTER_LEFT
