@@ -1,5 +1,6 @@
 package pt.marmelo.ets2atsjobsync.common.payload
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import pt.marmelo.ets2atsjobsync.common.utils.readProperty
 
 data class JobPayload(
@@ -21,9 +22,11 @@ data class JobPayload(
 ) {
     fun addTrailerPlace(trailerPlace: String) = this.trailerPlace.add(trailerPlace)
 
+    @get:JsonIgnore
     val isHighPowerCargo: Boolean
         get() = trailerVariant.contains("overweight") || trailerDefinition.contains("overweight")
 
+    @get:JsonIgnore
     val isHeavyCargo: Boolean
         get() = companyTruck.startsWith("heavy")
 
