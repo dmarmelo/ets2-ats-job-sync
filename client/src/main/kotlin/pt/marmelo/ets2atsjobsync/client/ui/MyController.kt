@@ -37,8 +37,6 @@ class MyController : Controller() {
     val availableJobLists = mutableListOf<String>().observable()
     val selectedJobList = SimpleStringProperty()
 
-    val extractModal = find<ExtractModal>()
-
     val status = SimpleStringProperty("Ready!")
 
     init {
@@ -140,6 +138,16 @@ class MyController : Controller() {
         selectedSave.value.replaceJobs(jobsList)
     }
 
+    fun extract(file: File) {
+        val extractedJobs = selectedSave.value.extractJobs()
+        val json = JacksonUtils.toString(extractedJobs)
+        Files.write(file.toPath(), json.toByteArray())
+    }
+
+    fun clearJobs() {
+        selectedSave.value.replaceJobs(emptyList())
+    }
+
     private fun gameFromString(game: String): Game =
         when (game) {
             Game.ETS2.name, "ProMods" -> Game.ETS2
@@ -148,11 +156,9 @@ class MyController : Controller() {
         }
 
     fun refresh() {
+        status.value = "Refreshing..."
         updateData(gameFromString(selectedGame.value))
         updateJobLists(selectedGame.value)
-    }
-
-    fun extract() {
-        extractModal.close()
+        status.value = "Refreshed!"
     }
 }

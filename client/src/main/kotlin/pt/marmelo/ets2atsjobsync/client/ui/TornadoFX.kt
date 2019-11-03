@@ -3,14 +3,15 @@ package pt.marmelo.ets2atsjobsync.client.ui
 import javafx.geometry.Pos
 import javafx.scene.image.Image
 import javafx.scene.layout.Priority
+import javafx.stage.FileChooser
 import javafx.stage.Stage
-import javafx.stage.StageStyle
 import pt.marmelo.ets2atsjobsync.client.Profile
 import pt.marmelo.ets2atsjobsync.client.Save
 import pt.marmelo.ets2atsjobsync.common.Dlc
 import pt.marmelo.ets2atsjobsync.common.Game
 import tornadofx.*
 import tornadofx.controlsfx.statusbar
+import java.nio.file.Paths
 
 class MyView : View("ETS2 ATS Job Sync") {
     private val controller: MyController by inject()
@@ -102,16 +103,35 @@ class MyView : View("ETS2 ATS Job Sync") {
                 paddingTop = 10.0
                 spacing = 20.0
                 button("Sync Jobs").action {
-                    controller.status.value = "Syncing"
+                    controller.status.value = "Syncing..."
                     runAsyncWithOverlay {
                         controller.sync()
                     } ui {
-                        controller.status.value = "Synced"
+                        controller.status.value = "Synced!"
                     }
                 }
-                button("Extract").action {
-                    controller.extractModal.openModal(stageStyle = StageStyle.UTILITY)
+                button("Extract Jobs").action {
+                    val filter = arrayOf(FileChooser.ExtensionFilter("JSON File (*.json)", "*.json"))
+                    val fileToSave = chooseFile("Save to", filter, FileChooserMode.Save) {
+                        initialDirectory = Paths.get(controller.selectedGame.value).toFile()
+                    }
+                    if (fileToSave.isNotEmpty()) {
+                        controller.status.value = "Extracting..."
+                        runAsyncWithOverlay {
+                            controller.extract(fileToSave[0])
+                        } ui {
+                            controller.status.value = "Extracted!"
+                        }
+                    }
                 }
+                /*button("Clear Jobs").action {
+                    controller.status.value = "Clearing..."
+                    runAsyncWithOverlay {
+                        controller.clearJobs()
+                    } ui {
+                        controller.status.value = "Cleared!"
+                    }
+                }*/
                 /*pane { hgrow = Priority.ALWAYS }
                 button("Close") {
                     alignment = Pos.CENTER_LEFT
@@ -119,21 +139,6 @@ class MyView : View("ETS2 ATS Job Sync") {
             }
         }
         bottom = statusbar(controller.status)
-    }
-}
-
-class ExtractModal : Fragment("Extract Jobs") {
-    private val controller: MyController by inject()
-
-    override val root = form {
-        fieldset {
-            field("Filename") {
-                textfield()
-            }
-            button("Save").action {
-                controller.extract()
-            }
-        }
     }
 }
 
